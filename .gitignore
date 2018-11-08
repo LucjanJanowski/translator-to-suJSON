@@ -1,1 +1,4 @@
 .~lock*
+
+# Ignore PyCharm project files
+.idea
