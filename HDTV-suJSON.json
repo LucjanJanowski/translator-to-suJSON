@@ -1,0 +1,390 @@
+{
+  "dataset_name": "vqeghd1",
+
+  "sujson_version": "1.1-in_progress",
+
+  "characteristics": {
+    "pixel_format": "yuv420",
+    "width": 1920,
+    "height": 1080,
+    "length": 10.0,
+
+    "rating_order_known": false,
+    "per_subject_data": true,
+
+    "src_dir": "/path/to/SRCs/dir",
+    "pvs_dir": "/path/to/PVSs/dir",
+
+    "laboratory": "AGH",
+
+    "date": {
+      "start": "2010-06",
+      "end": "2010-06"
+    },
+
+    "environment": {
+      "anything": "you think is important to specify",
+      "lighting": "conditions are a good example for subjective testing of video",
+      "room": "type used also seems relevant (e.g. whether any special audio noise removing setup was used)"
+    },
+
+    "with_sound": false,
+
+    "description": "This is an exemplary suJSON file, created to show how the new version of the format may be used for legacy data-sets. The VQEG's HDTV Phase I data-set is used. What is more, only the first (out of 6) experiment in this data-set is taken into account, namely \"vqeghd1\". From this first experiment, HRCs 1, 6 and 10 are taken into accout, but only for the two first SRCs: (1) NTIA Red Kayak and (2) NTIA Ode to the West Wind. For such a legacy data-set, usage of \"tasks\" list may seem superflous, as it conicides with the meaning of \"questions\" list. Nevertheless, its existence is necessary. In some more advanced subjective tests, complex tasks are assigned to each tester. For example \"Please rate three (3) PVSs given. The first two should be scored individually. What is more, the second one and the third one should be compared and better of the two selected\". In this case, a single task is given, but it consists of 3 questions. Each tester is trying to fulfilll the task for each PVS - all such events are called \"trials\". When a given tester fulffils the task, 3 scores are produced - two individual scores for the first two PVSs and one pair-wise score for the second and the third PVS. To present how flexible this format is, MOS scores for all PVSs used here are also given. Calculting those MOSs is classified as yet another type of a question (a special question with ID 2, that is not asked to any tester, but rather to the epxerimentator performing post-experiment data analysis)."
+  },
+
+  "tasks": [
+    {
+      "id": 1,
+      "task": "Please rate a PVS presented."
+    }
+  ],
+
+  "scales": [
+    {
+      "id": 1,
+      "name": "ACR5",
+      "type": "ordinal",
+      "description": "A classical Absolute Category Rating (ACR) scale with 5 ordinal levels",
+      "range": {
+        "min": 1,
+        "max": 5 
+      },
+      "labels": {
+        "bad": 1,
+        "poor": 2,
+        "fair": 3,
+        "good": 4,
+        "excellent": 5
+      },
+      "characteristics": {
+        "anything": "you want to add"
+      }
+    },
+    {
+      "id": 2,
+      "name": "unlabelled continuous from 1 to 5",
+      "type": "continuous",
+      "description": "A classical continuous scale for description of MOS scores",
+      "range": {
+        "min": 1.0,
+        "max": 5.0
+      },
+      "labels": null,
+      "characteristics": {
+        "anything": "you want to add"
+      } 
+    }
+  ],
+
+  "questions": [
+    {
+      "id": 1,
+      "question": "Please rate on overall quality",
+      "scale_id": 1,
+      "characteristics": {
+        "is_mandatory": true
+      }
+    },
+    {
+      "id": 2,
+      "question": "An overall quality averaged over all subjects",
+      "scale_id": 2,
+      "characteristics": {
+        "context": "A classical MOS score"
+      }
+    }
+  ],
+
+  "src": [
+    {
+      "id": 1,
+      "name": "NTIA Red Kayak",
+      "path": "/vqeghd1_src01_hrc00.v1.yuv"
+    },
+    {
+      "id": 2,
+      "name": "NTIA Ode to the West Wind",
+      "path": "/vqeghd1_src02_hrc00.v1.yuv"
+    }
+  ],
+
+  "hrc": [
+    {
+      "id": 1,
+      "characteristics": {
+        "codec": "MPEG-2",
+        "bit_rate": 6,
+        "plr": "133c",
+        "fps": 29.97,
+        "interlace": false
+      }
+    },
+    {
+      "id": 6,
+      "characteristics": {
+        "codec": "MPEG-2",
+        "bit_rate": 12,
+        "plr": "133d",
+        "fps": 29.97,
+        "interlace": false
+      }
+    },
+    {
+      "id": 10,
+      "characteristics": {
+        "codec": "MPEG-2",
+        "bit_rate": 18,
+        "plr": "133c",
+        "fps": 29.97,
+        "interlace": false
+      }
+    }
+  ],
+
+  "pvs": [
+    {
+      "id": 1,
+      "hrc_id": 1,
+      "src_id": 1,
+      "path": "/vqeghd1_src01_hrc01.v1.avi"
+    },
+    {
+      "id": 2,
+      "hrc_id": 6,
+      "src_id": 1,
+      "path": "/vqeghd1_src02_hrc00.v1.avi"
+    },
+    {
+      "id": 3,
+      "hrc_id": 10,
+      "src_id": 1,
+      "path": "/vqeghd1_src01_hrc10.v1.avi"
+    },
+    {
+      "id": 4,
+      "hrc_id": 1,
+      "src_id": 2,
+      "path": "/vqeghd1_src02_hrc01.v1.avi"
+    },
+    {
+      "id": 5,
+      "hrc_id": 6,
+      "src_id": 2,
+      "path": "/vqeghd1_src02_hrc06.v1.avi"
+    },
+    {
+      "id": 6,
+      "hrc_id": 10,
+      "src_id": 2,
+      "path": "/vqeghd1_src02_hrc10.v1.avi"
+    }
+  ],
+
+  "subjects": [
+    {
+      "id": 1
+    },
+    {
+      "id": 2
+    }
+  ],
+
+  "trials": [
+    {
+      "id": 1,
+      "subject_id": 1,
+      "task_id": 1,
+      "pvs_id": 1,
+      "score_id": 1
+    },
+    {
+      "id": 2,
+      "subject_id": 1,
+      "task_id": 1,
+      "pvs_id": 2,
+      "score_id": 2
+    },
+    {
+      "id": 3,
+      "subject_id": 1,
+      "task_id": 1,
+      "pvs_id": 3,
+      "score_id": 3
+    },
+    {
+      "id": 4,
+      "subject_id": 1,
+      "task_id": 1,
+      "pvs_id": 4,
+      "score_id": 4
+    },
+    {
+      "id": 5,
+      "subject_id": 1,
+      "task_id": 1,
+      "pvs_id": 5,
+      "score_id": 5
+    },
+    {
+      "id": 6,
+      "subject_id": 1,
+      "task_id": 1,
+      "pvs_id": 6,
+      "score_id": 6
+    },
+    {
+      "id": 7,
+      "subject_id": 2,
+      "task_id": 1,
+      "pvs_id": 1,
+      "score_id": 7
+    },
+    {
+      "id": 8,
+      "subject_id": 2,
+      "task_id": 1,
+      "pvs_id": 2,
+      "score_id": 8
+    },
+    {
+      "id": 9,
+      "subject_id": 2,
+      "task_id": 1,
+      "pvs_id": 3,
+      "score_id": 9
+    },
+    {
+      "id": 10,
+      "subject_id": 2,
+      "task_id": 1,
+      "pvs_id": 4,
+      "score_id": 10
+    },
+    {
+      "id": 11,
+      "subject_id": 2,
+      "task_id": 1,
+      "pvs_id": 5,
+      "score_id": 11
+    },
+    {
+      "id": 12,
+      "subject_id": 2,
+      "task_id": 1,
+      "pvs_id": 6,
+      "score_id": 12
+    }
+  ],
+
+  "scores": [
+    {
+      "id": 1,
+      "question_id": 1,
+      "pvs_id": 1,
+      "score": 2
+    },
+    {
+      "id": 2,
+      "question_id": 1,
+      "pvs_id": 2,
+      "score": 3
+    },
+    {
+      "id": 3,
+      "question_id": 1,
+      "pvs_id": 3,
+      "score": 4
+    },
+    {
+      "id": 4,
+      "question_id": 1,
+      "pvs_id": 4,
+      "score": 2
+    },
+    {
+      "id": 5,
+      "question_id": 1,
+      "pvs_id": 5,
+      "score": 2
+    },
+    {
+      "id": 6,
+      "question_id": 1,
+      "pvs_id": 6,
+      "score": 5
+    },
+    {
+      "id": 7,
+      "question_id": 1,
+      "pvs_id": 1,
+      "score": 3
+    },
+    {
+      "id": 8,
+      "question_id": 1,
+      "pvs_id": 2,
+      "score": 3
+    },
+    {
+      "id": 9,
+      "question_id": 1,
+      "pvs_id": 3,
+      "score": 4
+    },
+    {
+      "id": 10,
+      "question_id": 1,
+      "pvs_id": 4,
+      "score": 3
+    },
+    {
+      "id": 11,
+      "question_id": 1,
+      "pvs_id": 5,
+      "score": 4,
+    },
+    {
+      "id": 12,
+      "question_id": 1,
+      "pvs_id": 6,
+      "score": 5,
+    },
+    {
+      "id": 13,
+      "question_id": 2,
+      "pvs_id": 1,
+      "score": 1.917
+    },
+    {
+      "id": 14,
+      "question_id": 2,
+      "pvs_id": 2,
+      "score": 2.917
+    },
+    {
+      "id": 15,
+      "question_id": 2,
+      "pvs_id": 3,
+      "score": 4.083
+    },
+    {
+      "id": 16,
+      "question_id": 2,
+      "pvs_id": 4,
+      "score": 1.708
+    },
+    {
+      "id": 17,
+      "question_id": 2,
+      "pvs_id": 5,
+      "score": 2.458
+    },
+    {
+      "id": 18,
+      "question_id": 2,
+      "pvs_id": 6,
+      "score": 4.792
+    }
+  ]
+}
