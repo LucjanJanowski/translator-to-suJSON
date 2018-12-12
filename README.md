@@ -35,7 +35,7 @@ For more details about a classical design of a subjective test for video, one is
 at chapter 4 "DESIGN OVERVIEW: SUBJECTIVE EVALUATION PROCEDURE" in [a report from the VQEG HDTV Phase I
 subjective test](https://www.its.bldrdoc.gov/media/4212/vqeg_hdtv_final_report_version_2.0.zip).
 
-### Package
+## Packages
 In this project we are using the following packages: Pandas, NumPy
 
 Should you have any questions please do not hesitate to contact Jakub Nawała.
