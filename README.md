@@ -27,6 +27,33 @@ a given HRC to produce a PVS.
 
 For the purpose of this project, we are interested only in the "vqeghd1_raw" sheet from this file.
 
+## Exemplary MySQL dump
+
+The [subjective_scores_for_suJSON.sql](subjective_scores_for_suJSON.sql) file contains an exemplary
+dump from a MySQL database. In this case, the source MySQL database is designed to aid subjective 
+testing. It is used to store results on-the-fly. Those are later analysed to draw conclusions. It
+is assumed that architecture of this database reflects typical architectures of databases
+dedicated to subjective testing.
+
+The database consists of eight (8) tables, namely:
+1. QUESTIONNAIRE_ANSWERS,
+2. QUESTIONS,
+3. RESULTS,
+4. SCREEN,
+5. SLIDER_RESULTS,
+6. TESTS_DOC,
+7. TESTS_FILE,
+8. USER.
+
+Each of those serves a certain purpose. To make this description brief, only three (3) most important
+ones are described in details (please see the table below).
+
+| Table | Description |
+| ----- | ----------- |
+| RESULTS | Each row represents a score given by a single tester (identified by ID_USER) to a single image (identified by ID_FILE). Scores are placed in the MOS column (yes, "MOS" is not the most fortunate name for the column with individual scores). |
+| TESTS_FILE | Each row represents a single image. The ID column here corresponds to the ID_FILE column in the RESULTS table. The FILE_PATH column specifies the location of each image. Note that locations of files are specific to a server hosting this database. |
+| USER | Each row represents a single tester. The ID column here corresponds to the ID_USER column in the RESULTS table. |
+
 ## Theory
 For a gentle introduction into a topic of subjective testing for video, please take a look at [this Wikipedia
 page](https://en.wikipedia.org/wiki/Subjective_video_quality).
