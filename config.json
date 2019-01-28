@@ -5,7 +5,7 @@
   "src_hdr_name": "SRC Num",
   "hrc_hdr_name": "HRC Num",
   "file_hdr_name": "File",
-  "scores_range": {
+  "score_column_range": {
     "start": 5,
     "stop": 28
   },
