@@ -3,8 +3,12 @@ import json
 import numpy as np
 
 
-# Resolve numpy type problem
 def default(o):
+    """
+    Function which returns a serializable object for o
+    :param o: Given valuable
+    :return: A serializable object for o
+    """
     if isinstance(o, np.int64):
         return int(o)
     raise TypeError
@@ -12,12 +16,11 @@ def default(o):
 
 def write_to_json_file(path, file_name, data):
     """
-    Function which allows saving to JSON file
-
+    Function which allows saving to JSON file with defined name as well as file path
     :param path: Define result file path
     :param file_name: File name
     :param data: Data to save
-    :return:
+    :return: Final JSON file with data saved in specified path
     """
     file_path_name_wext = './' + path + './' + file_name + '.json'
     with open(file_path_name_wext, 'w') as fp:
@@ -66,7 +69,7 @@ scales = cf['scales']
 # QUESTIONS
 questions = cf['questions']
 
-# Define structure of final json file
+# Define structure of final JSON file
 final_data = {'dataset_name': dataset_name,
               'sujson_version': sujson_version,
               'characteristics': characteristics,
@@ -80,31 +83,31 @@ final_data = {'dataset_name': dataset_name,
               'trials': [],
               'scores': []}
 
-# SRC
+# Create SRC list for final_data
 id_num = 1
 for i in src_num:
     if i <= 9:
         a = '0' + str(i)
     else:
         a = str(i)
-    # Add to final data list of src
+    # Add to final_data list of src
     final_data['src'].append({'id': id_num,
                               'name': dataset_name + '_src' + a})
     id_num = id_num + 1
 
-# HRC
+# Create HRC list for final_data
 id_num = 1
 for i in hrc_num:
     if i <= 9:
         a = '0' + str(i)
     else:
         a = str(i)
-    # Add to final data list of hrc
+    # Add to final_data list of hrc
     final_data['hrc'].append({'id': id_num,
-                              'name': dataset_name + '_hrc' + a})
+                              'name': dataset_name + '_hrc' + a})           # Name is optional
     id_num = id_num + 1
 
-# PVS
+# Create PVS list for final_data
 id_num = 1
 m = 0
 for i in src_num:
@@ -127,25 +130,27 @@ for i in src_num:
         for element in pvs:
             valid_name = dataset_name + '_src' + a + '_hrc' + b
             # Compare created name with one from data file (only for code test purpose)
+            # Fixme: PVS name can not be different than dataset_name + src + hrc, does not work for other options
             if element.startswith(valid_name):
-                # Add to final data list of pvs
+                # Add to final_data list of pvs
                 final_data['pvs'].append({'id': id_num,
                                           'src_id': src_id,
                                           'hrc_id': hrc_id,
-                                          # 'file_check_name': dataset_name + '_src' + a + '_hrc' + b,
                                           'file_name': element})
                 id_num = id_num + 1
 
-# TEST SUBJECTS
-# Take header number of first subject
+# TODO: Find better solution for creating PVS list with correct name, which takes SRC, HRC id from dataframe
+
+# SUBJECTS
+# Take column header number of first subject
 subject_start_num = cf['score_column_range']['start']
 
-# Take header number of last subject
+# Take column header number of last subject
 subject_finish_num = cf['score_column_range']['stop']
  
 subjects = 1
 for i in range(subject_start_num, subject_finish_num+1):
-    # Add to final data list of subjects
+    # Add to final_data list of subjects
     final_data['subjects'].append({'id': subjects})
     subjects += 1
 
@@ -166,7 +171,7 @@ for subject_id in final_data['subjects']:
             # Take id from pvs list
             pvs_id_num = final_data['pvs'][pvs_num]['id']
             pvs_num = pvs_num + 1
-            # Add to final data list of trials
+            # Add to final_data list of trials
             final_data['trials'].append({'id': id_num,
                                          'subject_id': subject_id_num,
                                          'task_id': task_id_num,
@@ -178,9 +183,9 @@ for subject_id in final_data['subjects']:
 id_num = 1
 score_num = 0
 for score_id in final_data['trials']:
-    # Take pvs id from trials list
+    # Take pvs_id from trials list
     pvs_id_num = final_data['trials'][score_num]['pvs_id']
-    # Take subject id from trials list
+    # Take subject_id from trials list
     subject_id_num = final_data['trials'][score_num]['subject_id']
     subject_id_num = subject_id_num + subject_start_num - 2
     # Take subject score from dataframe
@@ -191,12 +196,12 @@ for score_id in final_data['trials']:
         # Take id from questions list
         question_id_num = final_data['questions'][question_num]['id']
         question_num = question_num + 1
-        # Add to final data list of scores
+        # Add to final_data list of scores
         final_data['scores'].append({'id': id_num,
                                      'question_id': question_id_num,
                                      'pvs_id': pvs_id_num,
                                      'score': subject_score})
         id_num = id_num + 1
 
-# Save results to json file
+# Save results to JSON file
 write_to_json_file(path, file_name, final_data)
