@@ -1,5 +1,7 @@
 {
   "file_name": "VQEG_HDTV_Final_Report_Data.xls",
+  "result_file_name": "result vegeghd1",
+  "result_file_path": "./",
   "sheet_hdr_name": "vqeghd1_raw",
   "header_row_pos": 1,
   "src_hdr_name": "SRC Num",
