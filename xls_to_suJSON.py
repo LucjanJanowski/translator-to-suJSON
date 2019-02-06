@@ -138,10 +138,10 @@ for i in src_num:
 
 # TEST SUBJECTS
 # Take header number of first subject
-subject_start_num = cf['scores_range']['start']
+subject_start_num = cf['score_column_range']['start']
 
 # Take header number of last subject
-subject_finish_num = cf['scores_range']['stop']
+subject_finish_num = cf['score_column_range']['stop']
  
 subjects = 1
 for i in range(subject_start_num, subject_finish_num+1):
