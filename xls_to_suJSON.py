@@ -83,6 +83,8 @@ final_data = {'dataset_name': dataset_name,
               'trials': [],
               'scores': []}
 
+# TODO: Create new SRC, HRC, PVS name writing system
+
 # Create SRC list for final_data
 id_num = 1
 for i in src_num:
