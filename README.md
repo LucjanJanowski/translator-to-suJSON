@@ -63,6 +63,6 @@ at chapter 4 "DESIGN OVERVIEW: SUBJECTIVE EVALUATION PROCEDURE" in [a report fro
 subjective test](https://www.its.bldrdoc.gov/media/4212/vqeg_hdtv_final_report_version_2.0.zip).
 
 ## Packages
-In this project we are using the following packages: Pandas, NumPy
+In this project we are using the following packages: Pandas, NumPy, xlrd.
 
 Should you have any questions please do not hesitate to contact Jakub Nawała.
