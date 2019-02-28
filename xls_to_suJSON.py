@@ -43,7 +43,8 @@ src_num = wb[cf['src_hdr_name']].unique()
 hrc_num = wb[cf['hrc_hdr_name']].unique()
 
 # Create list of unique pvs
-pvs = wb[cf['file_hdr_name']].unique()  # FIXME: Something is wrong here. JN should check this.
+# NOTE: The value given in the configuration file must exactly match header content in the analysed file
+pvs = wb[cf['file_hdr_name']].unique()
 
 # Define result file path
 path = cf['result_file_path']
@@ -94,7 +95,8 @@ for i in src_num:
         a = str(i)
     # Add to final_data list of src
     final_data['src'].append({'id': id_num,
-                              'name': dataset_name + '_src' + a})
+                              'name': dataset_name + '_src' + a})   # FIXME: There is no need to artificially generate
+                                                                    #  this field, just do not produce it
     id_num = id_num + 1
 
 # Create HRC list for final_data
@@ -138,7 +140,8 @@ for i in src_num:
                 final_data['pvs'].append({'id': id_num,
                                           'src_id': src_id,
                                           'hrc_id': hrc_id,
-                                          'file_name': element})
+                                          'file_name': element})    # NOTE: In the original suJSON this field is
+                                                                    #  called "path"
                 id_num = id_num + 1
 
 # TODO: Find better solution for creating PVS list with correct name, which takes SRC, HRC id from dataframe
@@ -149,7 +152,7 @@ subject_start_num = cf['score_column_range']['start']
 
 # Take column header number of last subject
 subject_finish_num = cf['score_column_range']['stop']
- 
+
 subjects = 1
 for i in range(subject_start_num, subject_finish_num+1):
     # Add to final_data list of subjects
