@@ -1,0 +1,60 @@
+{
+  "file_name": "its4s_subjective_data.xlsx",
+  "result_file_name": "result its4s",
+  "result_file_path": "./",
+  "sheet_hdr_name": "NTIA",
+  "header_row_pos": 0,
+  "footer_rows_to_skip": 8,
+  "src_hdr_name": "SRC",
+  "hrc_hdr_name": "HRC",
+  "file_hdr_name": "File_Name",
+  "score_column_range": 
+  {
+    "start": 12,
+    "stop": 38
+  },
+  "dataset_name": "its4s",
+  "characteristics": 
+  {
+    "rating_order_known": false,
+    "per_subject_data": true,
+    "src_dir": "cdvl.org",
+    "pvs_dir": "cdvl.org",
+    "laboratory": "?",
+    "date": {
+      "start": "NULL",
+      "end": "NULL"
+    },
+    "with_sound": false
+  },
+  "tasks":
+  [
+    {
+      "id": 1,
+      "task" : "Rate the overall quality for a single sequence"
+    }
+  ],
+  "scales": 
+  [
+    {
+      "id": 1,
+      "name": "ACR5",
+      "type": "ordinal",
+      "labels": {
+        "bad": 1,
+        "poor": 2,
+        "fair": 3,
+        "good": 4,
+        "excellent": 5
+      }
+    }
+  ],
+  "questions":
+  [
+    { 
+      "id": 1,
+      "question": "Please rate on overall quality",
+      "scale_id": 1
+    }
+  ]
+}
