@@ -34,7 +34,8 @@ with open('config.json') as configuration_file:
 # Open xls file with data
 wb = pd.read_excel(cf['file_name'],
                    sheet_name=cf['sheet_hdr_name'],
-                   header=cf['header_row_pos'])
+                   header=cf['header_row_pos'],
+                   skipfooter=cf["footer_rows_to_skip"])
 
 # Create list of unique src
 src_num = wb[cf['src_hdr_name']].unique()
@@ -87,70 +88,53 @@ final_data = {'dataset_name': dataset_name,
 # TODO: Create new SRC, HRC, PVS name writing system
 
 # Create SRC list for final_data
-id_num = 1
-for i in src_num:
-    if i <= 9:
-        a = '0' + str(i)
-    else:
-        a = str(i)
+for (ind, value) in enumerate(src_num):
+    id_num_str = "{:02d}".format(ind+1)
+
     # Add to final_data list of src
-    final_data['src'].append({'id': id_num,
-                              'name': dataset_name + '_src' + a})   # FIXME: There is no need to artificially generate
-                                                                    #  this field, just do not produce it
-    id_num = id_num + 1
+    final_data['src'].append({'id': ind,
+                              'name': dataset_name + '_src' + id_num_str})
 
 # Create HRC list for final_data
-id_num = 1
-for i in hrc_num:
-    if i <= 9:
-        a = '0' + str(i)
-    else:
-        a = str(i)
+for (ind, value) in enumerate(hrc_num):
+    id_num_str = "{:02d}".format(ind+1)
+
     # Add to final_data list of hrc
-    final_data['hrc'].append({'id': id_num,
-                              'name': dataset_name + '_hrc' + a})           # Name is optional
-    id_num = id_num + 1
+    final_data['hrc'].append({'id': ind,
+                              'name': dataset_name + '_hrc' + id_num_str})  # Name is optional
 
 # Create PVS list for final_data
-id_num = 1
-m = 0
-for i in src_num:
-    if i <= 9:
-        a = '0' + str(i)
-    else:
-        a = str(i)
-    # Take id of m element from src list
-    src_id = final_data['src'][m]['id']
-    m = m + 1
-    n = 0
-    for j in hrc_num:
-        if j <= 9:
-            b = '0' + str(j)
-        else:
-            b = str(j)
-        # Take id of n element from hrc list
-        hrc_id = final_data['hrc'][n]['id']
-        n = n + 1
-        for element in pvs:
-            valid_name = dataset_name + '_src' + a + '_hrc' + b
-            # Compare created name with one from data file (only for code test purpose)
-            # Fixme: PVS name can not be different than dataset_name + src + hrc, does not work for other options
-            if element.startswith(valid_name):
-                # Add to final_data list of pvs
-                final_data['pvs'].append({'id': id_num,
-                                          'src_id': src_id,
-                                          'hrc_id': hrc_id,
-                                          'file_name': element})    # NOTE: In the original suJSON this field is
-                                                                    #  called "path"
-                id_num = id_num + 1
+# TODO: Find better solution for creating PVS list with a correct name (considering SRC and HRC)
 
-# TODO: Find better solution for creating PVS list with correct name, which takes SRC, HRC id from dataframe
+# m = 0
+# for (src_ind, src_value) in enumerate(src_num):
+#     src_id_num_str = "{:02d}".format(src_ind+1)
+#
+#     # Take id of m element from src list
+#     src_id = final_data['src'][m]['id']
+#     m = m + 1
+#     n = 0
+#     for (hrc_ind, hrc_value) in enumerate(hrc_num):
+#         hrc_id_num_str = "{:02d}".format(hrc_ind+1)
+#
+#         # Take id of n element from hrc list
+#         hrc_id = final_data['hrc'][n]['id']
+#         n = n + 1
+id_num = 1
+for element in pvs:
+    # Add to final_data list of pvs
+    final_data['pvs'].append({'id': id_num,
+                              # 'src_id': src_id,
+                              # 'hrc_id': hrc_id,
+                              'file_name': element})    # NOTE: In the original suJSON this field is
+    #  called "path"
+    id_num = id_num + 1
 
 # SUBJECTS
-# Take column header number of first subject
+# Take column header number of the first subject
 subject_start_num = cf['score_column_range']['start']
 
-# Take column header number of last subject
+# Take column header number of the last subject
 subject_finish_num = cf['score_column_range']['stop']
 
 subjects = 1
