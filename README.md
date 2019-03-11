@@ -1,8 +1,21 @@
 # translator-to-suJSON
-A project aiming to create a set of tools for reading from non-standardised sources of subjectvie data
-and converting this information to a standardised format called _suJSON_.
+A project aiming to create a set of tools for reading from non-standardised sources of subjectvie data and converting this information to a standardised format called _suJSON_.
 
-## Exemplary CSV files
+## Scripts
+
+### Requirements
+
+- Python 3
+- `pip3 install --user -r requirements.txt`
+
+### Usage
+
+```
+scripts/xls_to_suJSON.py -c data/config.json
+```
+
+## Examples
+
 There are two CSV-like files here. Both represent typical subjective tests for video. One is
 [CCRIQ_Primary_Study_data_3labs.xlsx](CCRIQ_Primary_Study_data_3labs.xlsx) and the other is
 [VQEG_HDTV_Final_Report_Data.xls](VQEG_HDTV_Final_Report_Data.xls). Their descriptions are provided
@@ -62,7 +75,6 @@ For more details about a classical design of a subjective test for video, one is
 at chapter 4 "DESIGN OVERVIEW: SUBJECTIVE EVALUATION PROCEDURE" in [a report from the VQEG HDTV Phase I
 subjective test](https://www.its.bldrdoc.gov/media/4212/vqeg_hdtv_final_report_version_2.0.zip).
 
-## Packages
-In this project we are using the following packages: Pandas, NumPy, xlrd.
+## Authors/Contact
 
 Should you have any questions please do not hesitate to contact Jakub Nawała.
