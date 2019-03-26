@@ -43,7 +43,7 @@ src_num = wb[cf['src_hdr_name']].unique()
 hrc_num = wb[cf['hrc_hdr_name']].unique()
 
 # Create list of unique pvs
-pvs = wb[cf['file_hdr_name']].unique()  # FIXME: Something is wrong here. JN should check this.
+pvs = wb[cf['file_hdr_name']].unique()
 
 # Define result file path
 path = cf['result_file_path']
