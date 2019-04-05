@@ -35,7 +35,8 @@ def main():
     # Open xls file with data
     wb = pd.read_excel(cf['file_name'],
                        sheet_name=cf['sheet_hdr_name'],
-                       header=cf['header_row_pos'])
+                       header=cf['header_row_pos'],
+                       skipfooter=cf["footer_rows_to_skip"])
 
     # Create list of unique src
     src_num = wb[cf['src_hdr_name']].unique()
