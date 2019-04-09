@@ -2,98 +2,112 @@ import json
 import numpy as np
 import mysql.connector
 
-cnx = mysql.connector.connect(
-    user='root',
-    password='root',
-    host='localhost',
-    database='sujson')
 
-cursor = cnx.cursor()
-
-
-def default(o):  # resolve numpy type problem
+# Function to resolve numpy type problem
+def default(o):
     if isinstance(o, np.int64):
         return int(o)
     # raise TypeError
 
 
-def write_to_json_file(path, file_name, data):  # write to json file function
+# Function to writing results into json file
+def write_to_json_file(path, file_name, data):
     file_path_name_wext = './' + path + './' + file_name + '.json'
     with open(file_path_name_wext, 'w') as fp:
         json.dump(data, fp, indent=2, default=default)
 
 
-with open('config.json') as experiment_description:  # open configuration file
-    ed = json.load(experiment_description)
+# Main function
+def main():
+    # Open configuration file
+    with open('config.json') as experiment_description:
+        ed = json.load(experiment_description)
 
-path = './'  # define result file path
-file_name = 'result'  # define result file name
+    cnx = mysql.connector.connect(
+        user='root',
+        password='root',
+        host='localhost',
+        database='sujson')
 
-# DATASET_NAME
-dataset_name = ed['dataset_name']
+    cursor = cnx.cursor()
 
-# SUJSON_VERSION
-sujson_version = '1.1-in_progress'
+    # Define result file path
+    path = './'
 
-# CHARACTERISTICS
-characteristics = ed['characteristics']
+    # Define result file name
+    file_name = 'result'
 
-# TASKS
-tasks = ed['tasks']
+    # Fetch DATASET_NAME from description file
+    dataset_name = ed['dataset_name']
 
-# SCALES
-scales = ed['scales']
+    # suJSON_VERSION
+    sujson_version = '1.1-in_progress'
 
-# QUESTIONS
-questions = ed['questions']
+    # Fetch CHARACTERISTICS from description file
+    characteristics = ed['characteristics']
 
-final_data = {'dataset_name': dataset_name,  # define structure of final json file
-              'sujson_version': sujson_version,
-              'characteristics': characteristics,
-              'tasks': tasks,
-              'scales': scales,
-              'questions': questions,
-              'src': [],
-              'hrc': [],
-              'pvs': [],
-              'subjects': [],
-              'trials': [],
-              'scores': []}
+    # Fetch TASKS from description file
+    tasks = ed['tasks']
 
-# PVS
-cursor.execute('SELECT ID, FILE_PATH FROM tests_file')
-for (id, filepath) in cursor:
-    final_data['pvs'].append({'id': id,
-                              'src_id': None,
-                              'hrc_id': None,
-                              'file_path': filepath})
+    # Fetch SCALES from description file
+    scales = ed['scales']
 
-# SUBJECTS
-cursor.execute('SELECT ID FROM user')
-subjects = cursor.fetchall()
-for id in subjects:
-    final_data['subjects'].append({'id': id})
+    # Fetch QUESTIONS from description file
+    questions = ed['questions']
 
-# TRIALS
-cursor.execute('SELECT ID, ID_USER, ID_FILE, ID_TEST, TEST_DATE FROM results')
-result = cursor.fetchall()
-for (id, subject_id, pvs_id, test_id, test_date) in result:
-    final_data['trials'].append({'id': id,
-                                 'subject_id': subject_id,
-                                 'task_id': None,
-                                 'pvs_id': pvs_id,
-                                 'test_id': test_id,
-                                 'test_date': test_date})
+    # Define structure of final json file
+    final_data = {'dataset_name': dataset_name,
+                  'sujson_version': sujson_version,
+                  'characteristics': characteristics,
+                  'tasks': tasks,
+                  'scales': scales,
+                  'questions': questions,
+                  'src': [],
+                  'hrc': [],
+                  'pvs': [],
+                  'subjects': [],
+                  'trials': [],
+                  'scores': []}
 
-# SCORES
-cursor.execute('SELECT ID, ID_USER, ID_FILE, ID_TEST, TEST_DATE FROM results')
-result = cursor.fetchall()
-for (id, subject_id, pvs_id, test_id, test_date) in result:
-    final_data['scores'].append({'id': id,
-                                 'subject_id': subject_id,
-                                 'task_id': None,
-                                 'pvs_id': pvs_id,
-                                 'test_id': test_id,
-                                 'test_date': test_date})
+    # Fetch a list of PVSs from the SQL database
+    query = ('''SELECT ID, FILE_PATH FROM tests_file''')
+    cursor.execute(query)
+    for (id, filepath) in cursor:
+        final_data['pvs'].append({'id': id,
+                                  'src_id': None,
+                                  'hrc_id': None,
+                                  'file_path': filepath[:-1]})
 
-write_to_json_file(path, file_name, final_data)  # save results to json file
+    # Fetch a list of SUBJECTS from the SQL database
+    query = ('''SELECT ID FROM user''')
+    cursor.execute(query)
+    for id in cursor:
+        final_data['subjects'].append({'id': id[0]})
+
+    # Fetch a list of TRIALS from the SQL database
+    query = ('''SELECT ID, ID_USER, ID_FILE FROM results''')
+    cursor.execute(query)
+    for (id, subject_id, pvs_id) in cursor:
+        final_data['trials'].append({'id': id,
+                                     'subject_id': subject_id,
+                                     'task_id': None,
+                                     'pvs_id': pvs_id})
+
+    # Fetch a list of SCORES from the SQL database
+    query = ('''SELECT ID, ID_FILE, MOS FROM results''')
+    cursor.execute(query)
+    for (id, pvs_id, score) in cursor:
+        final_data['scores'].append({'id': id,
+                                     'question_id': None,
+                                     'pvs_id': pvs_id,
+                                     'score': score})
+
+    cursor.close()
+    cnx.close()
+
+    # Save results to json file
+    write_to_json_file(path, file_name, final_data)
+
+
+if __name__ == '__main__':
+    main()
