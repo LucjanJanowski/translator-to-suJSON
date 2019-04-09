@@ -63,12 +63,14 @@ def main():
 
     # SUBJECTS
     cursor.execute("SELECT ID FROM user")
+    # TODO Instead of "fetchall()" go through data one-by-one
     subjects = cursor.fetchall()
     for id in subjects:
         final_data["subjects"].append({"id": id})
 
     # TRIALS
     cursor.execute("SELECT ID, ID_USER, ID_FILE, ID_TEST, TEST_DATE FROM results")
+    # TODO Instead of "fetchall()" go through data one-by-one
     result = cursor.fetchall()
     for (id, subject_id, pvs_id, test_id, test_date) in result:
         final_data["trials"].append(
@@ -84,6 +86,7 @@ def main():
 
     # SCORES
     cursor.execute("SELECT ID, ID_USER, ID_FILE, ID_TEST, TEST_DATE FROM results")
+    # TODO Instead of "fetchall()" go through data one-by-one
     result = cursor.fetchall()
     for (id, subject_id, pvs_id, test_id, test_date) in result:
         final_data["scores"].append(
