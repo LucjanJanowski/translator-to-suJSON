@@ -1,75 +1,63 @@
+#!/usr/bin/env python3
+
 import json
-import numpy as np
 import mysql.connector
+from _cmd_utils import parse_args, write_to_json_file
+
+# TODO: parametrize this via CLI arguments
+cnx = mysql.connector.connect(
+    user="root", password='6Erthyad"', host="localhost", database="suJSON"
+)
+
+cursor = cnx.cursor()
 
 
-# TODO If you introduce new IDs for PVSs, use a dictionary to map old IDs into new ones
-
-# Function to resolve numpy type problem
-def default(o):
-    if isinstance(o, np.int64):
-        return int(o)
-    # raise TypeError
-
-
-# Function to writing results into json file
-def write_to_json_file(path, file_name, data):
-    file_path_name_wext = './' + path + './' + file_name + '.json'
-    with open(file_path_name_wext, 'w') as fp:
-        json.dump(data, fp, indent=2, default=default)
-
-
-# Main function
 def main():
-    # Open configuration file
-    with open('config.json') as experiment_description:
+    cli_args = parse_args()
+
+    # Open the configuration file
+    with open(cli_args.config) as experiment_description:
         ed = json.load(experiment_description)
 
-    cnx = mysql.connector.connect(
-        user='root',
-        password='root',
-        host='localhost',
-        database='sujson')
-
-    cursor = cnx.cursor()
-
     # Define result file path
-    path = './'
+    path = "./"
 
     # Define result file name
-    file_name = 'result_from_SQL'
+    file_name = "result_from_SQL"
 
     # Fetch DATASET_NAME from description file
-    dataset_name = ed['dataset_name']
+    dataset_name = ed["dataset_name"]
 
-    # suJSON_VERSION
-    sujson_version = '1.1-in_progress'
+    # SUJSON_VERSION
+    sujson_version = "1.1-in_progress"
 
     # Fetch CHARACTERISTICS from description file
-    characteristics = ed['characteristics']
+    characteristics = ed["characteristics"]
 
     # Fetch TASKS from description file
-    tasks = ed['tasks']
+    tasks = ed["tasks"]
 
     # Fetch SCALES from description file
-    scales = ed['scales']
+    scales = ed["scales"]
 
     # Fetch QUESTIONS from description file
-    questions = ed['questions']
+    questions = ed["questions"]
 
     # Define structure of final json file
-    final_data = {'dataset_name': dataset_name,
-                  'sujson_version': sujson_version,
-                  'characteristics': characteristics,
-                  'tasks': tasks,
-                  'scales': scales,
-                  'questions': questions,
-                  'src': [],
-                  'hrc': [],
-                  'pvs': [],
-                  'subjects': [],
-                  'trials': [],
-                  'scores': []}
+    final_data = {
+        "dataset_name": dataset_name,
+        "sujson_version": sujson_version,
+        "characteristics": characteristics,
+        "tasks": tasks,
+        "scales": scales,
+        "questions": questions,
+        "src": [],
+        "hrc": [],
+        "pvs": [],
+        "subjects": [],
+        "trials": [],
+        "scores": [],
+    }
 
     # Fetch a list of PVSs from the SQL database
     query = '''SELECT ID, FILE_PATH FROM TESTS_FILE'''
@@ -113,5 +101,5 @@ def main():
     write_to_json_file(path, file_name, final_data)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

@@ -1,48 +1,32 @@
+#!/usr/bin/env python3
+
 import pandas as pd
 import json
-import numpy as np
+import os
 
-
-def default(o):
-    """
-    Function which returns a serializable object for o
-    :param o: Given valuable
-    :return: A serializable object for o
-    """
-    if isinstance(o, np.int64):
-        return int(o)
-    raise TypeError
-
-
-def write_to_json_file(path, file_name, data):
-    """
-    Function which allows saving to JSON file with defined name as well as file path
-    :param path: Define result file path
-    :param file_name: File name
-    :param data: Data to save
-    :return: Final JSON file with data saved in specified path
-    """
-    file_path_name_wext = './' + path + './' + file_name + '.json'
-    with open(file_path_name_wext, 'w') as fp:
-        json.dump(data, fp, indent=2, default=default)
+from _cmd_utils import parse_args, write_to_json_file
 
 
 def main():
+    cli_args = parse_args()
+
     # Open configuration file
-    with open('config.json') as configuration_file:
+    with open(cli_args.config) as configuration_file:
         cf = json.load(configuration_file)
 
     # Open xls file with data
-    wb = pd.read_excel(cf['file_name'],
-                       sheet_name=cf['sheet_hdr_name'],
-                       header=cf['header_row_pos'],
-                       skipfooter=cf["footer_rows_to_skip"])
+    wb = pd.read_excel(
+        os.path.join(os.path.dirname(cli_args.config), cf["file_name"]),
+        sheet_name=cf["sheet_hdr_name"],
+        header=cf["header_row_pos"],
+        skipfooter=cf["footer_rows_to_skip"]
+    )
 
     # Create list of unique src
-    src_num = wb[cf['src_hdr_name']].unique()
+    src_num = wb[cf["src_hdr_name"]].unique()
 
     # Create list of unique hrc
-    hrc_num = wb[cf['hrc_hdr_name']].unique()
+    hrc_num = wb[cf["hrc_hdr_name"]].unique()
 
     # Create list of unique pvs
     pvs_unique = wb[cf['file_hdr_name']].unique()
@@ -55,42 +39,44 @@ def main():
     subject_finish_num = cf['score_column_range']['stop']
 
     # Define result file path
-    path = cf['result_file_path']
+    path = cf["result_file_path"]
 
     # Define result file name
-    file_name = cf['result_file_name']
+    file_name = cf["result_file_name"]
 
     # DATASET_NAME
-    dataset_name = cf['dataset_name']
+    dataset_name = cf["dataset_name"]
 
     # SUJSON_VERSION
-    sujson_version = '1.1-in_progress'
+    sujson_version = "1.1-in_progress"
 
     # CHARACTERISTICS
-    characteristics = cf['characteristics']
+    characteristics = cf["characteristics"]
 
     # TASKS
-    tasks = cf['tasks']
+    tasks = cf["tasks"]
 
     # SCALES
-    scales = cf['scales']
+    scales = cf["scales"]
 
     # QUESTIONS
-    questions = cf['questions']
+    questions = cf["questions"]
 
     # Define structure of final JSON file
-    final_data = {'dataset_name': dataset_name,
-                  'sujson_version': sujson_version,
-                  'characteristics': characteristics,
-                  'tasks': tasks,
-                  'scales': scales,
-                  'questions': questions,
-                  'src': [],
-                  'hrc': [],
-                  'pvs': [],
-                  'subjects': [],
-                  'trials': [],
-                  'scores': []}
+    final_data = {
+        "dataset_name": dataset_name,
+        "sujson_version": sujson_version,
+        "characteristics": characteristics,
+        "tasks": tasks,
+        "scales": scales,
+        "questions": questions,
+        "src": [],
+        "hrc": [],
+        "pvs": [],
+        "subjects": [],
+        "trials": [],
+        "scores": [],
+    }
 
     # Create SRC list for final_data
     for ind, val in enumerate(src_num):
@@ -130,6 +116,7 @@ def main():
         final_data['subjects'].append({'id': subject + 1})
 
     # TRIALS
+    # FIXME "score_id" field is generated shifted by 1 (for its4s subjective data)
     id_num = 1
     for subject_num, subject_id in enumerate(final_data['subjects']):
         # Take id from subjects list
