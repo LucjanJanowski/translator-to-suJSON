@@ -2,11 +2,11 @@
 
 import json
 import mysql.connector
-from ._cmd_utils import parse_args, write_to_json_file
+from _cmd_utils import parse_args, write_to_json_file
 
 # TODO: parametrize this via CLI arguments
 cnx = mysql.connector.connect(
-    user="root", password="root", host="localhost", database="sujson"
+    user="root", password='6Erthyad"', host="localhost", database="suJSON"
 )
 
 cursor = cnx.cursor()
@@ -15,32 +15,37 @@ cursor = cnx.cursor()
 def main():
     cli_args = parse_args()
 
-    with open(cli_args.config) as experiment_description:  # open configuration file
+    # Open the configuration file
+    with open(cli_args.config) as experiment_description:
         ed = json.load(experiment_description)
 
-    path = "./"  # define result file path
-    file_name = "result"  # define result file name
+    # Define result file path
+    path = "./"
 
-    # DATASET_NAME
+    # Define result file name
+    file_name = "result_from_SQL"
+
+    # Fetch DATASET_NAME from description file
     dataset_name = ed["dataset_name"]
 
     # SUJSON_VERSION
     sujson_version = "1.1-in_progress"
 
-    # CHARACTERISTICS
+    # Fetch CHARACTERISTICS from description file
     characteristics = ed["characteristics"]
 
-    # TASKS
+    # Fetch TASKS from description file
     tasks = ed["tasks"]
 
-    # SCALES
+    # Fetch SCALES from description file
     scales = ed["scales"]
 
-    # QUESTIONS
+    # Fetch QUESTIONS from description file
     questions = ed["questions"]
 
+    # Define structure of final json file
     final_data = {
-        "dataset_name": dataset_name,  # define structure of final json file
+        "dataset_name": dataset_name,
         "sujson_version": sujson_version,
         "characteristics": characteristics,
         "tasks": tasks,
@@ -54,53 +59,46 @@ def main():
         "scores": [],
     }
 
-    # PVS
-    cursor.execute("SELECT ID, FILE_PATH FROM tests_file")
-    for (id, filepath) in cursor:
-        final_data["pvs"].append(
-            {"id": id, "src_id": None, "hrc_id": None, "file_path": filepath}
-        )
+    # Fetch a list of PVSs from the SQL database
+    query = '''SELECT ID, FILE_PATH FROM TESTS_FILE'''
+    cursor.execute(query)
+    for (filepath_id, filepath) in cursor:
+        final_data['pvs'].append({'id': filepath_id,
+                                  'src_id': None,
+                                  'hrc_id': None,
+                                  'file_path': filepath[:-1]})
 
-    # SUBJECTS
-    cursor.execute("SELECT ID FROM user")
-    # TODO Instead of "fetchall()" go through data one-by-one
-    subjects = cursor.fetchall()
-    for id in subjects:
-        final_data["subjects"].append({"id": id})
+    # Fetch a list of SUBJECTS from the SQL database
+    query = '''SELECT ID FROM USER'''
+    cursor.execute(query)
+    for subject_id in cursor:
+        final_data['subjects'].append({'id': subject_id[0]})
 
-    # TRIALS
-    cursor.execute("SELECT ID, ID_USER, ID_FILE, ID_TEST, TEST_DATE FROM results")
-    # TODO Instead of "fetchall()" go through data one-by-one
-    result = cursor.fetchall()
-    for (id, subject_id, pvs_id, test_id, test_date) in result:
-        final_data["trials"].append(
-            {
-                "id": id,
-                "subject_id": subject_id,
-                "task_id": None,
-                "pvs_id": pvs_id,
-                "test_id": test_id,
-                "test_date": test_date,
-            }
-        )
+    # Fetch a list of TRIALS from the SQL database
+    query = '''SELECT ID, ID_USER, ID_FILE FROM RESULTS'''
+    cursor.execute(query)
+    for (trial_id, subject_id, pvs_id) in cursor:
+        final_data['trials'].append({'id': trial_id,
+                                     'subject_id': subject_id,
+                                     'task_id': None,
+                                     'pvs_id': pvs_id})
 
-    # SCORES
-    cursor.execute("SELECT ID, ID_USER, ID_FILE, ID_TEST, TEST_DATE FROM results")
-    # TODO Instead of "fetchall()" go through data one-by-one
-    result = cursor.fetchall()
-    for (id, subject_id, pvs_id, test_id, test_date) in result:
-        final_data["scores"].append(
-            {
-                "id": id,
-                "subject_id": subject_id,
-                "task_id": None,
-                "pvs_id": pvs_id,
-                "test_id": test_id,
-                "test_date": test_date,
-            }
-        )
+    # Fetch a list of SCORES from the SQL database
+    # TODO Make a connection with correct trials objects
+    # TODO Make a connection with a correct question object
+    query = '''SELECT ID, ID_FILE, MOS FROM RESULTS'''
+    cursor.execute(query)
+    for (ind, (result_id, pvs_id, score)) in enumerate(cursor):
+        final_data['scores'].append({'id': ind,
+                                     'question_id': None,
+                                     'pvs_id': pvs_id,
+                                     'score': score})
 
-    write_to_json_file(path, file_name, final_data)  # save results to json file
+    cursor.close()
+    cnx.close()
+
+    # Save results to json file
+    write_to_json_file(path, file_name, final_data)
 
 
 if __name__ == "__main__":

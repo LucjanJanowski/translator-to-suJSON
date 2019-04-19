@@ -1,4 +1,4 @@
 pandas
 numpy
-mysql-connector
+mysql-connector-python
 xlrd
