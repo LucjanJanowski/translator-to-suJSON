@@ -3,6 +3,8 @@ import numpy as np
 import mysql.connector
 
 
+# TODO If you introduce new IDs for PVSs, use a dictionary to map old IDs into new ones
+
 # Function to resolve numpy type problem
 def default(o):
     if isinstance(o, np.int64):
@@ -35,7 +37,7 @@ def main():
     path = './'
 
     # Define result file name
-    file_name = 'result'
+    file_name = 'result_from_SQL'
 
     # Fetch DATASET_NAME from description file
     dataset_name = ed['dataset_name']
@@ -70,34 +72,36 @@ def main():
                   'scores': []}
 
     # Fetch a list of PVSs from the SQL database
-    query = ('''SELECT ID, FILE_PATH FROM tests_file''')
+    query = '''SELECT ID, FILE_PATH FROM TESTS_FILE'''
     cursor.execute(query)
-    for (id, filepath) in cursor:
-        final_data['pvs'].append({'id': id,
+    for (filepath_id, filepath) in cursor:
+        final_data['pvs'].append({'id': filepath_id,
                                   'src_id': None,
                                   'hrc_id': None,
                                   'file_path': filepath[:-1]})
 
     # Fetch a list of SUBJECTS from the SQL database
-    query = ('''SELECT ID FROM user''')
+    query = '''SELECT ID FROM USER'''
     cursor.execute(query)
-    for id in cursor:
-        final_data['subjects'].append({'id': id[0]})
+    for subject_id in cursor:
+        final_data['subjects'].append({'id': subject_id[0]})
 
     # Fetch a list of TRIALS from the SQL database
-    query = ('''SELECT ID, ID_USER, ID_FILE FROM results''')
+    query = '''SELECT ID, ID_USER, ID_FILE FROM RESULTS'''
     cursor.execute(query)
-    for (id, subject_id, pvs_id) in cursor:
-        final_data['trials'].append({'id': id,
+    for (trial_id, subject_id, pvs_id) in cursor:
+        final_data['trials'].append({'id': trial_id,
                                      'subject_id': subject_id,
                                      'task_id': None,
                                      'pvs_id': pvs_id})
 
     # Fetch a list of SCORES from the SQL database
-    query = ('''SELECT ID, ID_FILE, MOS FROM results''')
+    # TODO Make a connection with correct trials objects
+    # TODO Make a connection with a correct question object
+    query = '''SELECT ID, ID_FILE, MOS FROM RESULTS'''
     cursor.execute(query)
-    for (id, pvs_id, score) in cursor:
-        final_data['scores'].append({'id': id,
+    for (ind, (result_id, pvs_id, score)) in enumerate(cursor):
+        final_data['scores'].append({'id': ind,
                                      'question_id': None,
                                      'pvs_id': pvs_id,
                                      'score': score})
