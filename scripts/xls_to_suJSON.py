@@ -79,36 +79,69 @@ def main():
     }
 
     # Create SRC list for final_data
-    for ind, val in enumerate(src_num):
-        # Add to final_data list of src
-        final_data['src'].append({'id': ind + 1,
-                                  'name': val})
+    if src_exist is None:
+        pass
+    else:
+        for ind, val in enumerate(src_num):
+            # Add to final_data list of src
+            final_data['src'].append({'id': ind + 1,
+                                      'name': val})
 
     # Create HRC list for final_data
-    for ind, val in enumerate(hrc_num):
-        # Add to final_data list of hrc
-        final_data['hrc'].append({'id': ind + 1,
-                                  'name': val})
+    if hrc_exist is None:
+        pass
+    else:
+        for ind, val in enumerate(hrc_num):
+            # Add to final_data list of hrc
+            final_data['hrc'].append({'id': ind + 1,
+                                      'name': val})
 
     # Create PVS list for final data
     for ind, val in enumerate(pvs_unique):
         # Get value of row from data
         a = wb.loc[wb[cf['file_hdr_name']] == val].index[0]
         # Get name of SRC connected with PVS
-        src_name = wb[cf['src_hdr_name']][a]
+        if src_exist is None:
+            pass
+        else:
+            src_name = wb[cf['src_hdr_name']][a]
         # Get name of HRC connected with PVS
-        hrc_name = wb[cf['hrc_hdr_name']][a]
-        for x, y in enumerate(final_data['src']):
-            # Check if SRC name is connected with any PVS
-            if src_name == final_data['src'][x]['name']:
-                for k, l in enumerate(final_data['hrc']):
-                    # Check if HRC name is connected with any PVS
-                    if hrc_name == final_data['hrc'][k]['name']:
-                        # Add to final_data list of PVS
-                        final_data['pvs'].append({'id': ind + 1,
-                                                  'src_id': final_data['src'][x]['id'],
-                                                  'hrc_id': final_data['hrc'][k]['id'],
-                                                  'file_name': val})
+        if hrc_exist is None:
+            pass
+        else:
+            hrc_name = wb[cf['hrc_hdr_name']][a]
+
+        if src_exist is not None and hrc_exist is not None:
+            for x, y in enumerate(final_data['src']):
+                # Check if SRC name is connected with any PVS
+                if src_name == final_data['src'][x]['name']:
+                    for k, l in enumerate(final_data['hrc']):
+                        # Check if HRC name is connected with any PVS
+                        if hrc_name == final_data['hrc'][k]['name']:
+                            # Add to final_data list of PVS
+                            final_data['pvs'].append({'id': ind + 1,
+                                                      'src_id': final_data['src'][x]['id'],
+                                                      'hrc_id': final_data['hrc'][k]['id'],
+                                                      'file_name': val})
+        elif src_exist is not None and hrc_exist is None:
+            for x, y in enumerate(final_data['src']):
+                # Check if SRC name is connected with any PVS
+                if src_name == final_data['src'][x]['name']:
+                    # Add to final_data list of PVS
+                    final_data['pvs'].append({'id': ind + 1,
+                                              'src_id': final_data['src'][x]['id'],
+                                              'file_name': val})
+        elif src_exist is None and hrc_exist is not None:
+            for k, l in enumerate(final_data['hrc']):
+                # Check if HRC name is connected with any PVS
+                if hrc_name == final_data['hrc'][k]['name']:
+                    # Add to final_data list of PVS
+                    final_data['pvs'].append({'id': ind + 1,
+                                              'hrc_id': final_data['hrc'][k]['id'],
+                                              'file_name': val})
+        else:
+            final_data['pvs'].append({'id': ind + 1,
+                                      'file_name': val})
 
     # SUBJECTS
     for subject, val in enumerate(range(subject_start_num, subject_finish_num + 1)):
