@@ -79,6 +79,7 @@ def main():
     }
 
     # Create SRC list for final_data
+    # FIXME Either define this in the configuration file or detect whether any SRC column exists
     if src_exist is None:
         pass
     else:
@@ -88,6 +89,7 @@ def main():
                                       'name': val})
 
     # Create HRC list for final_data
+    # FIXME Either define this in the configuration file or detect whether any HRC column exists
     if hrc_exist is None:
         pass
     else:
