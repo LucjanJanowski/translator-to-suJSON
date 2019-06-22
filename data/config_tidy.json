@@ -1,0 +1,62 @@
+{
+  "file_name": "agh_tidy.xlsx",
+  "result_file_name": "result agh_tidy",
+  "result_file_path": "./",
+  "sheet_hdr_name": "AGH-NTIA_14-505",
+  "header_row_pos": 0,
+  "footer_rows_to_skip": 0,
+  "src_hdr_name": "vi",
+  "hrc_hdr_name": "ai",
+  "file_hdr_name": "",
+  "structure_tidy": true,
+  "subject_column_name": "user_number",
+  "score_column": "vote",
+  "score_column_range":
+  {
+    "start": 0,
+    "stop": 0
+  },
+  "dataset_name": "AGH-NTIA_14-505",
+  "characteristics":
+  {},
+  "tasks":
+  [
+    {
+      "id": 1,
+      "task" : "Rate over all quality for single sequence"
+    }
+  ],
+  "scales":
+  [],
+  "questions":
+  [
+    {
+      "id": 1,
+      "question": "Please rate on overall quality",
+      "scale_id": 1
+    }
+  ],
+  "additional_data":
+  [
+    {
+      "id": 1,
+      "column_name": "device",
+      "column_description": "Device name"
+    },
+    {
+      "id": 2,
+      "column_name": "time_stamp",
+      "column_description": "Time stamp"
+    },
+    {
+      "id": 3,
+      "column_name": "src",
+      "column_description": "SRC Pool"
+    },
+    {
+      "id": 4,
+      "column_name": "location",
+      "column_description": "Experiment location"
+    }
+  ]
+}
