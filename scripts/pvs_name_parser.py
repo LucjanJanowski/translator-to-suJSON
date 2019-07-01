@@ -1,5 +1,7 @@
 import re
 
+# TODO: Define an interface for specifing what is the shape of PVS filenames
+
 # EXAMPLE FROM DROPBOX
 dropboxExample = 'AutumnMountains_A-phon-1mp_123.jpg'
 
