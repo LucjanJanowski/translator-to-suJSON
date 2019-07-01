@@ -20,6 +20,7 @@ def main():
         cf = json.load(configuration_file)
 
     # Open xls file with data
+    # TODO: Detect whether we are reading a CSV or XLS file
     wb = pd.read_excel(
         os.path.join(os.path.dirname(cli_args.config), cf["file_name"]),
         sheet_name=cf["sheet_hdr_name"],
