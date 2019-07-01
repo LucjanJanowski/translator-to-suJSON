@@ -69,7 +69,7 @@ def subject_tidy(wb, cf, final_data):
     :param final_data: Final data structure
     :return: Adds subjects to final_data structure
     """
-    subjects = wb[cf['subject_column_name']].unique()
+    subjects = wb[cf['subject_hdr_name']].unique()
     for subject, val in enumerate(subjects):
         # Add to final_data list of src
         final_data['subjects'].append({'id': subject + 1,
@@ -126,8 +126,8 @@ def trials_tidy(wb, cf, final_data):
     for task_num, task_id in enumerate(final_data['tasks']):
         # Take id from tasks list
         task_id_num = final_data['tasks'][task_num]['id']
-        subjects = wb[cf['subject_column_name']]
-        subjects_unique = wb[cf['subject_column_name']].unique()
+        subjects = wb[cf['subject_hdr_name']]
+        subjects_unique = wb[cf['subject_hdr_name']].unique()
         pvs_list = pvs_id_list(wb, cf, pvs_unique, final_data)
         for id, val in enumerate(subjects):
             for subject_id_num, subject_id in enumerate(subjects_unique):

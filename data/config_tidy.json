@@ -8,8 +8,8 @@
   "src_hdr_name": "vi",
   "hrc_hdr_name": "ai",
   "file_hdr_name": "",
-  "structure_tidy": true,
-  "subject_column_name": "user_number",
+  "is_tidy": true,
+  "subject_hdr_name": "user_number",
   "score_column": "vote",
   "score_column_range":
   {

@@ -55,7 +55,7 @@ def main():
         pvs_unique = wb[cf['file_hdr_name']].unique()
 
     # Chceck if dataset is tidy
-    if cf['structure_tidy'] is True:
+    if cf['is_tidy'] is True:
         is_subject_tidy = True
     else:
         is_subject_tidy = False
