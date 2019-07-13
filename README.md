@@ -1,4 +1,5 @@
-# translator-to-suJSON
+# suJSON
+
 A project aiming to create a set of tools for reading from non-standardised sources of subjectvie data and converting this information to a standardised format called _suJSON_.
 
 ## Scripts
@@ -6,15 +7,63 @@ A project aiming to create a set of tools for reading from non-standardised sour
 ### Requirements
 
 - Python 3
-- `pip3 install --user -r requirements.txt`
+- `pip3 install --user .`
 
 ### Usage
 
+The `sujson` command has two subcommands:
+
+- `ingest`: Ingest a file (XLS or CSV)
+- `export`: Export suJSON to CSV
+
 ```
-scripts/xls_to_suJSON.py -c data/config.json
+positional arguments:
+  {ingest,export}
+
+optional arguments:
+  -h, --help       show this help message and exit
+  -f, --force      Force overwrite existing files
+  -d, --debug      Print debugging output
+  -v, --verbose    Print verbose output
+  -n, --dry-run    Do not run, only print what would be done
+  --version        Print version and exit
+```
+
+For ingesting:
+
+```
+positional arguments:
+  input                 Input file, currently only .xslx or .csv supported
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -c CONFIG, --config CONFIG
+                        Config file
+  -o OUTPUT, --output OUTPUT
+                        Output file, currently only .json supported. If not
+                        given, will write to STDOUT.
+```
+
+For exporting:
+
+```
+positional arguments:
+  input                 Input suJSON file
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o OUTPUT, --output OUTPUT
+                        Output file, currently only .csv supported. If not
+                        given, will write to STDOUT.
 ```
 
 ## Examples
+
+For example, run:
+
+```
+python3 -m sujson ingest example/data/its4s_subjective_data.xlsx -c example/config/config.json.for_its4s.json
+```
 
 There are two CSV-like files here. Both represent typical subjective tests for video. One is
 [CCRIQ_Primary_Study_data_3labs.xlsx](CCRIQ_Primary_Study_data_3labs.xlsx) and the other is
@@ -77,4 +126,9 @@ subjective test](https://www.its.bldrdoc.gov/media/4212/vqeg_hdtv_final_report_v
 
 ## Authors/Contact
 
-Should you have any questions please do not hesitate to contact Jakub Nawała.
+Should you have any questions please do not hesitate to contact the authors.
+
+Authors:
+
+- Jakub Nawała
+- Werner Robitza

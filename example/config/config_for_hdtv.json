@@ -1,19 +1,18 @@
 {
-  "file_name": "its4s_subjective_data.xlsx",
-  "result_file_name": "its4s_suJSON",
-  "result_file_path": "./",
-  "sheet_hdr_name": "NTIA",
-  "header_row_pos": 0,
-  "footer_rows_to_skip": 8,
-  "src_hdr_name": "SRC",
-  "hrc_hdr_name": "HRC",
-  "file_hdr_name": "File_Name",
-  "score_column_range": {
-    "start": 12,
-    "stop": 38
+  "sheet_hdr_name": "vqeghd1_raw",
+  "header_row_pos": 1,
+  "footer_rows_to_skip": 0,
+  "src_hdr_name": "SRC Num",
+  "hrc_hdr_name": "HRC Num",
+  "file_hdr_name": " File",
+  "score_column_range":
+  {
+    "start": 5,
+    "stop": 28
   },
-  "dataset_name": "its4s",
-  "characteristics": {
+  "dataset_name": "vqeghd1",
+  "characteristics":
+  {
     "rating_order_known": false,
     "per_subject_data": true,
     "src_dir": "cdvl.org",
@@ -25,13 +24,15 @@
     },
     "with_sound": false
   },
-  "tasks": [
+  "tasks":
+  [
     {
       "id": 1,
-      "task": "Rate over all quality for single sequence"
+      "task" : "Rate over all quality for single sequence"
     }
   ],
-  "scales": [
+  "scales":
+  [
     {
       "id": 1,
       "name": "ACR5",
@@ -45,7 +46,8 @@
       }
     }
   ],
-  "questions": [
+  "questions":
+  [
     {
       "id": 1,
       "question": "Please rate on overall quality",

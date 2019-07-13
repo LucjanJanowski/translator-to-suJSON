@@ -48,7 +48,7 @@
       "description": "A classical Absolute Category Rating (ACR) scale with 5 ordinal levels",
       "range": {
         "min": 1,
-        "max": 5 
+        "max": 5
       },
       "labels": {
         "bad": 1,
@@ -73,7 +73,7 @@
       "labels": null,
       "characteristics": {
         "anything": "you want to add"
-      } 
+      }
     }
   ],
 
@@ -342,13 +342,13 @@
       "id": 11,
       "question_id": 1,
       "pvs_id": 5,
-      "score": 4,
+      "score": 4
     },
     {
       "id": 12,
       "question_id": 1,
       "pvs_id": 6,
-      "score": 5,
+      "score": 5
     },
     {
       "id": 13,
