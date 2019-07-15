@@ -5,6 +5,10 @@
   "src_hdr_name": "SRC Num",
   "hrc_hdr_name": "HRC Num",
   "file_hdr_name": " File",
+  "is_tidy": false,
+  "subject_column_name": "user_number",
+  "subject_hdr_name": "user_number",
+  "score_column": "vote",
   "score_column_range":
   {
     "start": 5,
