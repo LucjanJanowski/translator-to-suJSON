@@ -171,7 +171,6 @@ class Sujson:
             self.sujson["subjects"].append({"id": subject + 1})
 
         # TRIALS
-        # FIXME "score_id" field is generated shifted by 1 (for its4s subjective data)
         id_num = 1
         for subject_num, subject_id in enumerate(self.sujson["subjects"]):
             # Take id from subjects list
@@ -189,7 +188,7 @@ class Sujson:
                             "subject_id": subject_id_num,
                             "task_id": task_id_num,
                             "pvs_id": pvs_id_num,
-                            "score_id": id_num + 1,
+                            "score_id": id_num,
                         }
                     )
                     id_num = id_num + 1
