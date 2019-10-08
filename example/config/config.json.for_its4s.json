@@ -1,20 +1,21 @@
 {
-  "file_name": "its4s_subjective_data.xlsx",
-  "result_file_name": "result its4s",
-  "result_file_path": "./",
   "sheet_hdr_name": "NTIA",
   "header_row_pos": 0,
   "footer_rows_to_skip": 8,
   "src_hdr_name": "SRC",
   "hrc_hdr_name": "HRC",
   "file_hdr_name": "File_Name",
-  "score_column_range": 
+  "is_tidy": false,
+  "subject_column_name": "user_number",
+  "subject_hdr_name": "user_number",
+  "score_column": "vote",
+  "score_column_range":
   {
     "start": 12,
     "stop": 38
   },
   "dataset_name": "its4s",
-  "characteristics": 
+  "characteristics":
   {
     "rating_order_known": false,
     "per_subject_data": true,
@@ -34,7 +35,7 @@
       "task" : "Rate the overall quality for a single sequence"
     }
   ],
-  "scales": 
+  "scales":
   [
     {
       "id": 1,
@@ -51,7 +52,7 @@
   ],
   "questions":
   [
-    { 
+    {
       "id": 1,
       "question": "Please rate on overall quality",
       "scale_id": 1
