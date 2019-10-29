@@ -132,3 +132,5 @@ Authors:
 
 - Jakub Nawała
 - Werner Robitza
+- Łukasz Dzierwa
+- Mikołaj Duda
