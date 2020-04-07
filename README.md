@@ -2,6 +2,10 @@
 
 A project aiming to create a set of tools for reading from non-standardised sources of subjectvie data and converting this information to a standardised format called _suJSON_.
 
+## What is suJSON?
+
+suJSON is a data storage format that helps organise subjective results. Currently, we (meaning the suJSON developers) treat [this suJSON file](example/data/two-separate-and-pair-comparison-suJSON.json) as an example of the format we build tools around. To understand its contents please take a look at this [documentation](https://docs.google.com/document/d/1m6X-wRVc4acJOHFDZu9iiync1R9NB_3ZI4tKuJrOi4k/edit?usp=sharing "suJSON Documentation") (which is a work-in-progress).
+
 ## Scripts
 
 ### Requirements
