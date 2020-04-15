@@ -71,7 +71,7 @@ python3 -m sujson ingest example/data/its4s_subjective_data.xlsx -c example/conf
 
 There are two CSV-like files here. Both represent typical subjective tests for video. One is
 [CCRIQ_Primary_Study_data_3labs.xlsx](CCRIQ_Primary_Study_data_3labs.xlsx) and the other is
-[VQEG_HDTV_Final_Report_Data.xls](VQEG_HDTV_Final_Report_Data.xls). Their descriptions are provided
+[VQEG_HDTV_Final_Report_Data.xls](example/data/VQEG_HDTV_Final_Report_Data.xls). Their descriptions are provided
 in the next paragraphs.
 
 ### CCRIQ
@@ -87,7 +87,7 @@ Hypothetical Reference Circuit (HRC). Correspondingly, a scene shot using a give
 Processed Video Sequence (PVS).
 
 ### HDTV
-The [VQEG_HDTV_Final_Report_Data.xls](VQEG_HDTV_Final_Report_Data.xls) comes from a classical
+The [VQEG_HDTV_Final_Report_Data.xls](example/data/VQEG_HDTV_Final_Report_Data.xls) comes from a classical
 subjective test for video. SRC represents a pristine video recording, which is processed using
 a given HRC to produce a PVS.
 
