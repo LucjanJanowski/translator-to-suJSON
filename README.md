@@ -138,3 +138,4 @@ Authors:
 - Werner Robitza
 - Łukasz Dzierwa
 - Mikołaj Duda
+- Anna Wróblewska
