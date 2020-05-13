@@ -106,14 +106,30 @@ def ingest(args):
             "-o",
             "--output",
             type=str,
-            help="Output file, currently only .csv supported. If not given, will write to STDOUT.",
+            help="Output file, currently only .pickle supported.",
         ),
     ]
 )
 def export(args):
     logger.debug("Ingesting with arguments: {}".format(args))
     sujson = Sujson(force=args.force, dry_run=args.dry_run)
-    sujson.export(args.input, args.output)
+
+    logger.debug("Ingesting with arguments: {}".format(args))
+    sujson = Sujson(force=args.force, dry_run=args.dry_run)
+
+    suffix = os.path.splitext(args.input)[1]
+    output_suffix = os.path.splitext(args.output)[1]
+    if suffix in [".json"] and output_suffix in [".pickle"]:
+        sujson.export(
+            args.input,
+            args.output
+        )
+    elif suffix in [".json"]:
+        raise SujsonError("Unknown export file suffix {}".format(output_suffix))
+    elif output_suffix in [".pickle"]:
+        raise SujsonError("Unknown export file suffix {}".format(suffix))
+    else:
+        raise SujsonError("Unknown export file suffix {} and {}".format(suffix, output_suffix))
 
 
 if __name__ == "__main__":

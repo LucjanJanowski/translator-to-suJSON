@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 import numpy as np
+import pickle
 
 from . import __version__
 from ._errors import SujsonError
@@ -376,6 +377,24 @@ class Sujson:
         # TODO import CSV file
 
     def export(self, input_file, output_file=None):
-        self._read_sujson(input_file)
-        raise SujsonError("export is not implemented yet!")
         # TODO export suJSON file
+
+        try:
+            self._read_sujson(input_file)
+        except FileNotFoundError:
+            raise SujsonError("That is not correct input path")
+
+        try:
+            outfile = open(output_file, 'wb')
+        except FileNotFoundError:
+            raise SujsonError("That is not correct output path")
+
+        some_dict = {'a': self.sujson['dataset_name'], 'b': [5,6], 'c' :{'ac': 7}}
+        pickle.dump(some_dict, outfile)
+        outfile.close()
+
+        infile = open(output_file, 'rb')
+        new_dict = pickle.load(infile)
+        infile.close()
+        print((new_dict))
+

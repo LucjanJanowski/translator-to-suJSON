@@ -2,5 +2,7 @@
 
 # Ignore PyCharm project files
 .idea
+.venv
+venv/
 
 __pycache__
