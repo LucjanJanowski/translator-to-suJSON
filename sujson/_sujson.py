@@ -382,19 +382,24 @@ class Sujson:
         try:
             self._read_sujson(input_file)
         except FileNotFoundError:
+            # TODO 1. Print out the path that is erroneous (i.e., input_file)
             raise SujsonError("That is not correct input path")
 
         try:
             outfile = open(output_file, 'wb')
         except FileNotFoundError:
+            # TODO 2. Print out the path that is erroneous (i.e., output_file)
             raise SujsonError("That is not correct output path")
 
-        some_dict = {'a': self.sujson['dataset_name'], 'b': [5,6], 'c' :{'ac': 7}}
+        # TODO 3. Pickle the actual suJSON data read (and not an exemplary dictionary)
+        some_dict = {'a': self.sujson['dataset_name'], 'b': [5, 6], 'c': {'ac': 7}}
         pickle.dump(some_dict, outfile)
         outfile.close()
 
+        # TODO 4. Remove the test code below
         infile = open(output_file, 'rb')
         new_dict = pickle.load(infile)
         infile.close()
-        print((new_dict))
+        print(new_dict)
 
+        # TODO 5. Return some status code to notify the caller that everything went well

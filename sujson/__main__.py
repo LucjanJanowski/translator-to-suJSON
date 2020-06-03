@@ -112,26 +112,25 @@ def ingest(_args):
                  ),
     ]
 )
-def export(args):
-    logger.debug("Ingesting with arguments: {}".format(args))
-    sujson = Sujson(force=args.force, dry_run=args.dry_run)
+def export(_args):
+    """
+    Reads subjective data from a suJSON file and stores the data in a file format of choice
+    """
+    logger.debug("Ingesting with arguments: {}".format(_args))
+    sujson = Sujson(force=_args.force, dry_run=_args.dry_run)
 
-    logger.debug("Ingesting with arguments: {}".format(args))
-    sujson = Sujson(force=args.force, dry_run=args.dry_run)
+    suffix = os.path.splitext(_args.input)[1]
+    output_suffix = os.path.splitext(_args.output)[1]
 
-    suffix = os.path.splitext(args.input)[1]
-    output_suffix = os.path.splitext(args.output)[1]
-    if suffix in [".json"] and output_suffix in [".pickle"]:
-        sujson.export(
-            args.input,
-            args.output
-        )
-    elif suffix in [".json"]:
-        raise SujsonError("Unknown export file suffix {}".format(output_suffix))
-    elif output_suffix in [".pickle"]:
-        raise SujsonError("Unknown export file suffix {}".format(suffix))
-    else:
-        raise SujsonError("Unknown export file suffix {} and {}".format(suffix, output_suffix))
+    if suffix not in [".json"]:
+        raise SujsonError("Unsupported input file suffix {}".format(suffix))
+
+    if output_suffix not in [".pickle"]:
+        raise SujsonError("Unsupported output file suffix {}".format(output_suffix))
+
+    sujson.export(_args.input, _args.output)
+
+    # TODO 6. Inform the user what is the status of the operation (did it go ok?)
 
 
 if __name__ == "__main__":
