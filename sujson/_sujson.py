@@ -389,12 +389,23 @@ class Sujson:
         except FileNotFoundError:
             raise SujsonError("That is not correct output path")
 
-        some_dict = {'a': self.sujson['dataset_name'], 'b': [5,6], 'c' :{'ac': 7}}
-        pickle.dump(some_dict, outfile)
+        pickle.dump(self.sujson, outfile)
         outfile.close()
 
-        infile = open(output_file, 'rb')
-        new_dict = pickle.load(infile)
-        infile.close()
-        print((new_dict))
+        pvs_id = []
+        trial_id = []
+        subject_id = []
+        scores = []
 
+        index = 0
+        for i in self.sujson['scores']:
+            pvs_id.append(i['pvs_id'])
+            trial_id.append(i['id'])
+            scores.append(i['score'])
+            subject_id.append(self.sujson['trials'][index]['subject_id'])
+            index = index+1
+
+        scores_data_frame = pd.DataFrame({'PVS': pvs_id,
+                          'Subject': subject_id,
+                          'Trial': trial_id,
+                          'Score': scores})
