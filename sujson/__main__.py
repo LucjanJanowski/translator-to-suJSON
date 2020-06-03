@@ -9,7 +9,6 @@ from ._logger import setup_custom_logger
 
 logger = setup_custom_logger("sujson")
 
-
 parser = ArgumentParser(description="%(prog)s v{}".format(__version__))
 parser.add_argument(
     "-f", "--force", action="store_true", help="Force overwrite existing files"
@@ -32,17 +31,19 @@ subparsers = parser.add_subparsers(dest="subcommand")
 
 
 def argument(*name_or_flags, **kwargs):
-    """Convenience function to properly format arguments to pass to the
+    """
+    Convenience function to properly format arguments to pass to the
     subcommand decorator.
     """
-    return (list(name_or_flags), kwargs)
+    return list(name_or_flags), kwargs
 
 
 # https://gist.github.com/mivade/384c2c41c3a29c637cb6c603d4197f9f
-def subcommand(args=[], parent=subparsers):
-    """Decorator to define a new subcommand in a sanity-preserving way.
+def subcommand(_args=[], parent=subparsers):
+    """
+    Decorator to define a new subcommand in a sanity-preserving way.
     The function will be stored in the ``func`` variable when the parser
-    parses arguments so that it can be called directly like so::
+    parses arguments so that it can be called directly like so:
         args = parser.parse_args()
         args.func(args)
     Usage example::
@@ -55,7 +56,7 @@ def subcommand(args=[], parent=subparsers):
 
     def decorator(func):
         parser = parent.add_parser(func.__name__, description=func.__doc__)
-        for arg in args:
+        for arg in _args:
             parser.add_argument(*arg[0], **arg[1])
         parser.set_defaults(func=func)
 
@@ -76,23 +77,26 @@ def subcommand(args=[], parent=subparsers):
         ),
     ]
 )
-def ingest(args):
-    logger.debug("Ingesting with arguments: {}".format(args))
-    sujson = Sujson(force=args.force, dry_run=args.dry_run)
+def ingest(_args):
+    """
+    Read a file with subjective data and store its contents in a *.sujson file
+    """
+    logger.debug("Ingesting with arguments: {}".format(_args))
+    sujson = Sujson(force=_args.force, dry_run=_args.dry_run)
 
-    suffix = os.path.splitext(args.input)[1]
+    suffix = os.path.splitext(_args.input)[1]
     if suffix in [".xls", ".xlsx"]:
         sujson.import_xslx(
-            args.input,
-            args.output,
-            config_file=args.config
+            _args.input,
+            _args.output,
+            config_file=_args.config
             # TODO: add other possible arguments here (e.g. those from config)
         )
     elif suffix in [".csv"]:
         sujson.import_csv(
-            args.input,
-            args.output,
-            config_file=args.config
+            _args.input,
+            _args.output,
+            config_file=_args.config
             # TODO: add other possible arguments here (e.g. record separator)
         )
     else:
@@ -102,12 +106,10 @@ def ingest(args):
 @subcommand(
     [
         argument("input", type=str, help="Input suJSON file"),
-        argument(
-            "-o",
-            "--output",
-            type=str,
-            help="Output file, currently only .pickle supported.",
-        ),
+        argument("output",
+                 type=str,
+                 help="Output file path, currently only .pickle files are supported.",
+                 ),
     ]
 )
 def export(args):
