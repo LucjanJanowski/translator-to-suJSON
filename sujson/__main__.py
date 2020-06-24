@@ -108,17 +108,25 @@ def ingest(args):
             type=str,
             help="Output file, currently only .pickle supported.",
         ),
+        argument("-f", "--format", type=str, help="In which data format suJSON data is stored in the output file."
+                                                  " Supported formats include: raw suJSON and Pandas DataFrame")
     ]
 )
-def export(_args):
+def export(_cli_args):
     """
     Reads subjective data from a suJSON file and stores the data in a file format of choice
-    """
-    logger.debug("Ingesting with arguments: {}".format(_args))
-    sujson = Sujson(force=_args.force, dry_run=_args.dry_run)
 
-    suffix = os.path.splitext(_args.input)[1]
-    output_suffix = os.path.splitext(_args.output)[1]
+    TODO @awro1444 Parse the "format" input argument to see whether we should store suJSON data as is or as Pandas
+     DataFrame
+
+    :param _cli_args: ArgumentParser object holding arguments from the CLI as parsed by the
+        ArgumentParser module
+    """
+    logger.debug("Ingesting with arguments: {}".format(_cli_args))
+    sujson = Sujson(force=_cli_args.force, dry_run=_cli_args.dry_run)
+
+    suffix = os.path.splitext(_cli_args.input)[1]
+    output_suffix = os.path.splitext(_cli_args.output)[1]
 
     if suffix not in [".json"]:
         raise SujsonError("Unsupported input file suffix {}".format(suffix))
@@ -126,10 +134,14 @@ def export(_args):
     if output_suffix not in [".pickle"]:
         raise SujsonError("Unsupported output file suffix {}".format(output_suffix))
 
-    export_result = sujson.export(_args.input, _args.output)
+    is_export_successfull = sujson.export(_cli_args.input, _cli_args.output)
 
     # TODO 6. Inform the user what is the status of the operation (did it go ok?)
-    print(export_result)
+    if is_export_successfull:
+        logger.info("It went good")
+    else:
+        logger.info("It went wrong")
+
 
 if __name__ == "__main__":
     args = parser.parse_args()

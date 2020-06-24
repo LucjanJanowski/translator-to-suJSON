@@ -377,6 +377,13 @@ class Sujson:
         # TODO import CSV file
 
     def export(self, input_file, output_file=None):
+        """
+        Here goes the description...
+
+        :param input_file: ..
+        :param output_file: ..
+        :return: status - True if successful, False otherwise
+        """
         # TODO export suJSON file
 
         try:
@@ -393,6 +400,7 @@ class Sujson:
         pickle.dump(self.sujson, outfile)
         outfile.close()
 
+        # TODO @awro1444 Separate it somehow from the raw export to pickle
         pvs_id = []
         trial_id = []
         subject_id = []
@@ -413,4 +421,4 @@ class Sujson:
 
 
         # TODO 5. Return some status code to notify the caller that everything went well
-        return "suJSON file successfully exported to a pickle"
+        return True  # "suJSON file successfully exported to a pickle"
