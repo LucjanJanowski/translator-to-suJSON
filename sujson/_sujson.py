@@ -382,13 +382,14 @@ class Sujson:
         try:
             self._read_sujson(input_file)
         except FileNotFoundError:
-            raise SujsonError("That is not correct input path")
+            raise SujsonError("That is not correct input path: {}".format(input_file))
 
         try:
             outfile = open(output_file, 'wb')
         except FileNotFoundError:
-            raise SujsonError("That is not correct output path")
+            raise SujsonError("That is not correct output path: {}".format(output_file))
 
+        # exporting sujson dictionary to pickle
         pickle.dump(self.sujson, outfile)
         outfile.close()
 
@@ -409,3 +410,7 @@ class Sujson:
                           'Subject': subject_id,
                           'Trial': trial_id,
                           'Score': scores})
+
+
+        # TODO 5. Return some status code to notify the caller that everything went well
+        return "suJSON file successfully exported to a pickle"
