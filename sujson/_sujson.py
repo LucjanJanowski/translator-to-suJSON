@@ -376,11 +376,37 @@ class Sujson:
         raise SujsonError("import_csv is not implemented yet!")
         # TODO import CSV file
 
-    def export(self, input_file, output_file=None):
+    def raw_export(self, outfile):
+        pickle.dump(self.sujson, outfile)
+        outfile.close()
+
+    def pandas_export(self, outfile):
+        pvs_id = []
+        trial_id = []
+        subject_id = []
+        scores = []
+
+        index = 0
+        for i in self.sujson['scores']:
+            pvs_id.append(i['pvs_id'])
+            trial_id.append(i['id'])
+            scores.append(i['score'])
+            subject_id.append(self.sujson['trials'][index]['subject_id'])
+            index = index + 1
+
+        scores_data_frame = pd.DataFrame({'PVS': pvs_id,
+                                          'Subject': subject_id,
+                                          'Trial': trial_id,
+                                          'Score': scores})
+        pickle.dump(scores_data_frame, outfile)
+        outfile.close()
+
+    def export(self, input_file, output_format, output_file=None):
         """
         Here goes the description...
 
         :param input_file: ..
+        :param output_format: ..
         :param output_file: ..
         :return: status - True if successful, False otherwise
         """
@@ -396,29 +422,19 @@ class Sujson:
         except FileNotFoundError:
             raise SujsonError("That is not correct output path: {}".format(output_file))
 
-        # exporting sujson dictionary to pickle
-        pickle.dump(self.sujson, outfile)
-        outfile.close()
-
         # TODO @awro1444 Separate it somehow from the raw export to pickle
-        pvs_id = []
-        trial_id = []
-        subject_id = []
-        scores = []
 
-        index = 0
-        for i in self.sujson['scores']:
-            pvs_id.append(i['pvs_id'])
-            trial_id.append(i['id'])
-            scores.append(i['score'])
-            subject_id.append(self.sujson['trials'][index]['subject_id'])
-            index = index+1
+        if output_format == "suJSON":
+            # exporting suJSON dictionary to pickle
+            self.raw_export(outfile)
 
-        scores_data_frame = pd.DataFrame({'PVS': pvs_id,
-                          'Subject': subject_id,
-                          'Trial': trial_id,
-                          'Score': scores})
-
+        if output_format == "Pandas":
+            # exporting to pickle as Pandas Data Frame
+            self.pandas_export(outfile)
 
         # TODO 5. Return some status code to notify the caller that everything went well
         return True  # "suJSON file successfully exported to a pickle"
+
+
+
+

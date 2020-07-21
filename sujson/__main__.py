@@ -109,7 +109,8 @@ def ingest(args):
             help="Output file, currently only .pickle supported.",
         ),
         argument("-f", "--format", type=str, help="In which data format suJSON data is stored in the output file."
-                                                  " Supported formats include: raw suJSON and Pandas DataFrame")
+                                                  " Supported formats include: raw suJSON (suJSON) "
+                                                  "and Pandas DataFrame (Pandas)")
     ]
 )
 def export(_cli_args):
@@ -127,6 +128,7 @@ def export(_cli_args):
 
     suffix = os.path.splitext(_cli_args.input)[1]
     output_suffix = os.path.splitext(_cli_args.output)[1]
+    format_arg = _cli_args.format
 
     if suffix not in [".json"]:
         raise SujsonError("Unsupported input file suffix {}".format(suffix))
@@ -134,13 +136,17 @@ def export(_cli_args):
     if output_suffix not in [".pickle"]:
         raise SujsonError("Unsupported output file suffix {}".format(output_suffix))
 
-    is_export_successfull = sujson.export(_cli_args.input, _cli_args.output)
+    if format_arg not in ["suJSON", "Pandas"]:
+        raise SujsonError("Unsupported format argument {} - possible 'suJSON' or 'Pandas'".format(format_arg))
+
+
+    is_export_successfull = sujson.export(_cli_args.input,_cli_args.format,_cli_args.output)
 
     # TODO 6. Inform the user what is the status of the operation (did it go ok?)
     if is_export_successfull:
-        logger.info("It went good")
+        logger.info("Export finished with success")
     else:
-        logger.info("It went wrong")
+        logger.info("Export finished with failure")
 
 
 if __name__ == "__main__":
