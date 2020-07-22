@@ -391,6 +391,8 @@ class Sujson:
             pvs_id.append(i['pvs_id'])
             trial_id.append(i['id'])
             scores.append(i['score'])
+            # TODO @awro1444 We should index trials using score_id since there is no guarantee that "trials" has the
+            #  same ordering as "scores"
             subject_id.append(self.sujson['trials'][index]['subject_id'])
             index = index + 1
 
@@ -410,19 +412,15 @@ class Sujson:
         :param output_file: ..
         :return: status - True if successful, False otherwise
         """
-        # TODO export suJSON file
-
         try:
             self._read_sujson(input_file)
         except FileNotFoundError:
-            raise SujsonError("That is not correct input path: {}".format(input_file))
+            raise SujsonError("That is not a correct input path: {}".format(input_file))
 
         try:
             outfile = open(output_file, 'wb')
         except FileNotFoundError:
             raise SujsonError("That is not correct output path: {}".format(output_file))
-
-        # TODO @awro1444 Separate it somehow from the raw export to pickle
 
         if output_format == "suJSON":
             # exporting suJSON dictionary to pickle
@@ -434,7 +432,3 @@ class Sujson:
 
         # TODO 5. Return some status code to notify the caller that everything went well
         return True  # "suJSON file successfully exported to a pickle"
-
-
-
-

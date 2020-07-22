@@ -9,7 +9,6 @@ from ._logger import setup_custom_logger
 
 logger = setup_custom_logger("sujson")
 
-
 parser = ArgumentParser(description="%(prog)s v{}".format(__version__))
 parser.add_argument(
     "-f", "--force", action="store_true", help="Force overwrite existing files"
@@ -107,6 +106,7 @@ def ingest(args):
             "--output",
             type=str,
             help="Output file, currently only .pickle supported.",
+            default="output.pickle"
         ),
         argument("-f", "--format", type=str, help="In which data format suJSON data is stored in the output file."
                                                   " Supported formats include: raw suJSON (suJSON) "
@@ -117,9 +117,6 @@ def export(_cli_args):
     """
     Reads subjective data from a suJSON file and stores the data in a file format of choice
 
-    TODO @awro1444 Parse the "format" input argument to see whether we should store suJSON data as is or as Pandas
-     DataFrame
-
     :param _cli_args: ArgumentParser object holding arguments from the CLI as parsed by the
         ArgumentParser module
     """
@@ -127,6 +124,7 @@ def export(_cli_args):
     sujson = Sujson(force=_cli_args.force, dry_run=_cli_args.dry_run)
 
     suffix = os.path.splitext(_cli_args.input)[1]
+    # TODO @awro1444 What happens if I omit the optional "--output" argument?
     output_suffix = os.path.splitext(_cli_args.output)[1]
     format_arg = _cli_args.format
 
@@ -136,17 +134,17 @@ def export(_cli_args):
     if output_suffix not in [".pickle"]:
         raise SujsonError("Unsupported output file suffix {}".format(output_suffix))
 
+    # TODO @awro1444 What happens if I omit the optional "--format" argument?
     if format_arg not in ["suJSON", "Pandas"]:
         raise SujsonError("Unsupported format argument {} - possible 'suJSON' or 'Pandas'".format(format_arg))
 
+    is_export_successful = sujson.export(_cli_args.input, _cli_args.format, _cli_args.output)
 
-    is_export_successfull = sujson.export(_cli_args.input,_cli_args.format,_cli_args.output)
-
-    # TODO 6. Inform the user what is the status of the operation (did it go ok?)
-    if is_export_successfull:
+    # Inform the user what is the status of the operation (did it go ok?)
+    if is_export_successful:
         logger.info("Export finished with success")
     else:
-        logger.info("Export finished with failure")
+        logger.error("Exporting failed")
 
 
 if __name__ == "__main__":
