@@ -387,10 +387,11 @@ class Sujson:
         scores = []
 
         index = 0
-        for i in self.sujson['scores']:
-            pvs_id.append(i['pvs_id'])
-            trial_id.append(i['id'])
-            scores.append(i['score'])
+        # Iterate over all scores
+        for score in self.sujson['scores']:
+            pvs_id.append(score['pvs_id'])
+            trial_id.append(score['id'])
+            scores.append(score['score'])
             # TODO @awro1444 We should index trials using score_id since there is no guarantee that "trials" has the
             #  same ordering as "scores"
             subject_id.append(self.sujson['trials'][index]['subject_id'])
