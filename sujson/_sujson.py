@@ -381,6 +381,9 @@ class Sujson:
         outfile.close()
 
     def pandas_export(self, outfile):
+        # TODO @awro1444 I suggest to iterate through "trials" instead of "scores". In case of many scores being
+        #  assigned to a single trial, read the related score IDs and appropriately iterate through "scores". Note that
+        #  iterating through "trials" removes the problem with finding the proper subject ID for a trial.
         pvs_id = []
         trial_id = []
         subject_id = []
@@ -392,12 +395,10 @@ class Sujson:
             pvs_id.append(score['pvs_id'])
             trial_id.append(score['id'])
             scores.append(score['score'])
-            # TODO @awro1444 We should index trials using score_id since there is no guarantee that "trials" has the
-            #  same ordering as "scores"
             subject_id.append(self.sujson['trials'][index]['subject_id'])
             index = index + 1
 
-        scores_data_frame = pd.DataFrame({'PVS': pvs_id,
+        scores_data_frame = pd.DataFrame({'Stimulus': pvs_id,
                                           'Subject': subject_id,
                                           'Trial': trial_id,
                                           'Score': scores})
