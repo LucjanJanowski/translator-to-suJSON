@@ -105,12 +105,12 @@ def ingest(args):
             "-o",
             "--output",
             type=str,
-            help="Output file, currently only .pickle supported.",
+            help="Output file, currently only .pickle supported. Defaults to \"output.pickle\".",
             default="output.pickle"
         ),
         argument("-f", "--format", type=str, help="In which data format suJSON data is stored in the output file."
                                                   " Supported formats include: raw suJSON (suJSON) "
-                                                  "and Pandas DataFrame (Pandas)")
+                                                  "and Pandas DataFrame (Pandas). Defaults to \"suJSON\".")
     ]
 )
 def export(_cli_args):
