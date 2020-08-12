@@ -430,5 +430,4 @@ class Sujson:
             # exporting to pickle as Pandas Data Frame
             self.pandas_export(outfile)
 
-        # TODO 5. Return some status code to notify the caller that everything went well
         return True  # "suJSON file successfully exported to a pickle"

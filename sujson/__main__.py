@@ -116,16 +116,14 @@ def ingest(args):
 def export(_cli_args):
     """
     Reads subjective data from a suJSON file and stores the data in a file format of choice
-
-    :param _cli_args: ArgumentParser object holding arguments from the CLI as parsed by the
-        ArgumentParser module
     """
     logger.debug("Ingesting with arguments: {}".format(_cli_args))
     sujson = Sujson(force=_cli_args.force, dry_run=_cli_args.dry_run)
 
     suffix = os.path.splitext(_cli_args.input)[1]
-    # TODO @awro1444 What happens if I omit the optional "--output" argument?
-    # TODO @awro1444 What happens if I omit the optional "--format" argument?
+    if suffix not in [".json"]:
+        raise SujsonError("Unsupported input file suffix {}".format(suffix))
+
     if _cli_args.output is not None:
         output_suffix = os.path.splitext(_cli_args.output)[1]
         if output_suffix not in [".pickle"]:
@@ -137,9 +135,6 @@ def export(_cli_args):
             raise SujsonError("Unsupported format argument {} - possible 'suJSON' or 'Pandas'".format(format_arg))
     else:
         _cli_args.format = "suJSON"
-
-    if suffix not in [".json"]:
-        raise SujsonError("Unsupported input file suffix {}".format(suffix))
 
     is_export_successful = sujson.export(_cli_args.input, _cli_args.format, _cli_args.output)
 
