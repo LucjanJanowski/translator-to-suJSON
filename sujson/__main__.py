@@ -125,18 +125,21 @@ def export(_cli_args):
 
     suffix = os.path.splitext(_cli_args.input)[1]
     # TODO @awro1444 What happens if I omit the optional "--output" argument?
-    output_suffix = os.path.splitext(_cli_args.output)[1]
-    format_arg = _cli_args.format
+    # TODO @awro1444 What happens if I omit the optional "--format" argument?
+    if _cli_args.output is not None:
+        output_suffix = os.path.splitext(_cli_args.output)[1]
+        if output_suffix not in [".pickle"]:
+            raise SujsonError("Unsupported output file suffix {}".format(output_suffix))
+
+    if _cli_args.format is not None:
+        format_arg = _cli_args.format
+        if format_arg not in ["suJSON", "Pandas"]:
+            raise SujsonError("Unsupported format argument {} - possible 'suJSON' or 'Pandas'".format(format_arg))
+    else:
+        _cli_args.format = "suJSON"
 
     if suffix not in [".json"]:
         raise SujsonError("Unsupported input file suffix {}".format(suffix))
-
-    if output_suffix not in [".pickle"]:
-        raise SujsonError("Unsupported output file suffix {}".format(output_suffix))
-
-    # TODO @awro1444 What happens if I omit the optional "--format" argument?
-    if format_arg not in ["suJSON", "Pandas"]:
-        raise SujsonError("Unsupported format argument {} - possible 'suJSON' or 'Pandas'".format(format_arg))
 
     is_export_successful = sujson.export(_cli_args.input, _cli_args.format, _cli_args.output)
 
