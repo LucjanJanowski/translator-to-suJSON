@@ -224,7 +224,8 @@
       "task_id": 1,
       "session_num": 1,
       "order_num": 1,
-      "pvs_id": [1, 2, 3]
+      "pvs_id": [1, 2, 3],
+      "score_id": [1, 2, 3]
     },
     {
       "id": 2,
@@ -232,7 +233,8 @@
       "task_id": 1,
       "session_num": 1,
       "order_num": 1,
-      "pvs_id": [3, 1, 2]
+      "pvs_id": [3, 1, 2],
+      "score_id": [4, 5, 6]
     }
   ],
 
@@ -240,7 +242,6 @@
     {
       "id": 1,
       "question_id": 1,
-      "trial_id": 1,
       "timestamp": "2018-11-19 17:32:04.812",
       "score": 4,
       "pvs_id": 1
@@ -248,7 +249,6 @@
     {
       "id": 2,
       "question_id": 1,
-      "trial_id": 1,
       "timestamp": "2018-11-19 17:32:19.412",
       "score": 3,
       "pvs_id": 2
@@ -256,7 +256,6 @@
     {
       "id": 3,
       "question_id": 2,
-      "trial_id": 1,
       "timestamp": "2018-11-19 17:32:31.563",
       "score": 1,
       "pvs_id": [2, 3]
@@ -264,7 +263,6 @@
     {
       "id": 4,
       "question_id": 1,
-      "trial_id": 2,
       "timestamp": "2018-11-19 17:32:05.002",
       "score": 4,
       "pvs_id": 3
@@ -272,7 +270,6 @@
     {
       "id": 5,
       "question_id": 1,
-      "trial_id": 2,
       "timestamp": "2018-11-19 17:32:14.812",
       "score": 3,
       "pvs_id": 1
@@ -280,7 +277,6 @@
     {
       "id": 6,
       "question_id": 2,
-      "trial_id": 2,
       "timestamp": "2018-11-19 17:32:33.263",
       "score": 0,
       "pvs_id": [1, 2]
