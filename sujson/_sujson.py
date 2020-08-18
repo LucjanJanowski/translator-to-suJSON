@@ -384,26 +384,25 @@ class Sujson:
         # TODO @awro1444 I suggest to iterate through "trials" instead of "scores". In case of many scores being
         #  assigned to a single trial, read the related score IDs and appropriately iterate through "scores". Note that
         #  iterating through "trials" removes the problem with finding the proper subject ID for a trial.
-        pvs_id = []
+        stimulus_id = []
         trial_id = []
         subject_id = []
         scores = []
 
-        index = 0
         # Iterate over all scores
-        for score in self.sujson['scores']:
-            pvs_id.append(score['pvs_id'])
-            trial_id.append(score['id'])
-            scores.append(score['score'])
-            subject_id.append(self.sujson['trials'][index]['subject_id'])
-            index = index + 1
+        for trial in self.sujson['trials']:
+            stimulus_id.append(trial['pvs_id'])
+            scores.append(self.sujson['scores'][trial['score_id'] - 1]['score'])
+            trial_id.append(trial['id'])
+            subject_id.append(trial['subject_id'])
 
-        scores_data_frame = pd.DataFrame({'Stimulus': pvs_id,
+        scores_data_frame = pd.DataFrame({'Stimulus': stimulus_id,
                                           'Subject': subject_id,
                                           'Trial': trial_id,
                                           'Score': scores})
         pickle.dump(scores_data_frame, outfile)
         outfile.close()
+        print(scores_data_frame)
 
     def export(self, input_file, output_format, output_file=None):
         """
