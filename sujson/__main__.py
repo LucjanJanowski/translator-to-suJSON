@@ -119,6 +119,8 @@ def export(_cli_args):
     """
     Reads subjective data from a suJSON file and stores the data in a file format of choice
     """
+    # TODO @awro1444 Allow CSV file as another output format - this format should be used for storing the data in a way
+    #  allowing to read it from inside of Matlab
     logger.debug("Ingesting with arguments: {}".format(_cli_args))
     sujson = Sujson(force=_cli_args.force, dry_run=_cli_args.dry_run)
 
