@@ -381,9 +381,6 @@ class Sujson:
         outfile.close()
 
     def pandas_export(self, outfile):
-        # TODO @awro1444 I suggest to iterate through "trials" instead of "scores". In case of many scores being
-        #  assigned to a single trial, read the related score IDs and appropriately iterate through "scores". Note that
-        #  iterating through "trials" removes the problem with finding the proper subject ID for a trial.
         stimulus_id = []
         trial_id = []
         subject_id = []
@@ -392,10 +389,15 @@ class Sujson:
         # Iterate over all scores
         for trial in self.sujson['trials']:
             stimulus_id.append(trial['pvs_id'])
+            # TODO @awro1444 What if the ordering of scores is not in line with the ordering of trials? What if there
+            #  are more scores related with a single trial? We need to implement a more sophisticated startegy of
+            #  retrieving scores related with a given trial.
             scores.append(self.sujson['scores'][trial['score_id'] - 1]['score'])
             trial_id.append(trial['id'])
             subject_id.append(trial['subject_id'])
 
+        # TODO @awro1444 Please change column headers to reflect the newest naming convention (see this comment:
+        #  https://github.com/LucjanJanowski/translator-to-suJSON/issues/15#issuecomment-627998489)
         scores_data_frame = pd.DataFrame({'Stimulus': stimulus_id,
                                           'Subject': subject_id,
                                           'Trial': trial_id,
