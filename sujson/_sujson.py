@@ -228,6 +228,7 @@ class Sujson:
             logger.warning("No config file given. We have to make many assumptions...")
 
     def import_xslx(self, input_file, output_file=None, config_file=None):
+        # TODO @Qub3k Simplify this function (probably by splitting it into multiple smaller functions)
         self._read_config(config_file)
 
         logger.info("Reading data from {}".format(input_file))
