@@ -39,7 +39,7 @@
 
     "with_sound": false,
 
-    "description": "This is a dummy suJSON file, created to test yet another possible scenario for subjective testing. Notice that two (2) testers take part in the experiment. By looking at timestamps of their answers it becomes obvious that they performed the test simultaneously. To show how flexible this format is, a MOS score for PVS 1 is given in list \"scores\". Noitce, that there may be many tasks in a single subjective experiment. In this example, only a single task is given to testers."
+    "description": "This is a dummy suJSON file, created to test yet another possible scenario for subjective testing. Notice that two (2) testers take part in the experiment. By looking at timestamps of their answers it becomes obvious that they performed the test simultaneously. To show how flexible this format is, a MOS score for PVS 1 is given in list \"scores\". Notice, that there may be many tasks in a single subjective experiment. In this example, only a single task is given to testers."
   },
 
   "tasks": [
