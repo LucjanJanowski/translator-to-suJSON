@@ -390,18 +390,12 @@ class Sujson:
 
         # Iterate over all trials
         for trial in self.sujson['trials']:
-            # TODO @awro1444 What if the same person scores the same stimulus two or more times?
+            # TODO (optional) @awro1444 What if the same person scores the same stimulus two or more times?
             for pvs_id, score_id in zip(trial['pvs_id'], trial['score_id']):
                 stimulus_id.append(pvs_id)
                 scores.append(score_id)  # TODO @awro1444 This way you are storing score ID and not a score itself
                 trial_id.append(trial['id'])
                 subject_id.append(trial['subject_id'])
-
-            # second version, trial id always unique, but stimulus and score are lists
-            # stimulus_id.append(trial['pvs_id'])
-            # scores.append(trial['score_id'])
-            # trial_id.append(trial['id'])
-            # subject_id.append(trial['subject_id'])
 
         scores_data_frame = pd.DataFrame({'stimulus_id': stimulus_id,
                                           'subject_id': subject_id,
