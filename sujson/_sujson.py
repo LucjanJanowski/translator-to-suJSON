@@ -2,6 +2,7 @@ import json
 import pandas as pd
 import numpy as np
 import pickle
+import os
 
 from . import __version__
 from ._errors import SujsonError
@@ -381,7 +382,8 @@ class Sujson:
         pickle.dump(self.sujson, outfile)
         outfile.close()
 
-    def pandas_export(self, outfile):
+
+    def pandas_export(self):
         stimulus_id = []
         trial_id = []
         subject_id = []
@@ -389,23 +391,34 @@ class Sujson:
 
         # Iterate over all scores
         for trial in self.sujson['trials']:
-            stimulus_id.append(trial['pvs_id'])
+            for pvs, score in zip(trial['pvs_id'], trial['score_id']):
+                stimulus_id.append(pvs)
+                scores.append(score)
+                trial_id.append(trial['id'])
+                subject_id.append(trial['subject_id'])
+
+            # second version, trial id always unique, but stimulus and score are lists
+            # stimulus_id.append(trial['pvs_id'])
+            # scores.append(trial['score_id'])
+            # trial_id.append(trial['id'])
+            # subject_id.append(trial['subject_id'])
+
+
             # TODO @awro1444 What if the ordering of scores is not in line with the ordering of trials? What if there
             #  are more scores related with a single trial? We need to implement a more sophisticated startegy of
             #  retrieving scores related with a given trial.
-            scores.append(self.sujson['scores'][trial['score_id'] - 1]['score'])
-            trial_id.append(trial['id'])
-            subject_id.append(trial['subject_id'])
+
 
         # TODO @awro1444 Please change column headers to reflect the newest naming convention (see this comment:
         #  https://github.com/LucjanJanowski/translator-to-suJSON/issues/15#issuecomment-627998489)
-        scores_data_frame = pd.DataFrame({'Stimulus': stimulus_id,
-                                          'Subject': subject_id,
-                                          'Trial': trial_id,
+        scores_data_frame = pd.DataFrame({'Stimulus id': stimulus_id,
+                                          'Subject id': subject_id,
+                                          'Trial id': trial_id,
                                           'Score': scores})
-        pickle.dump(scores_data_frame, outfile)
-        outfile.close()
-        print(scores_data_frame)
+        #pickle.dump(scores_data_frame, outfile)
+        #outfile.close()
+        #print(scores_data_frame)
+        return scores_data_frame
 
     def export(self, input_file, output_format, output_file=None):
         """
@@ -432,6 +445,12 @@ class Sujson:
 
         if output_format == "Pandas":
             # exporting to pickle as Pandas Data Frame
-            self.pandas_export(outfile)
+            df = self.pandas_export()
+            if os.path.splitext(output_file)[1] in [".csv"]:
+                df.to_csv(output_file)
+            else:
+                pickle.dump(df, outfile)
+                outfile.close()
+
 
         return True  # "suJSON file successfully exported to a pickle"

@@ -107,12 +107,16 @@ def ingest(_args):
             "-o",
             "--output",
             type=str,
-            help="Output file, currently only .pickle supported. Defaults to \"output.pickle\".",
+            help="Output file, currently .pickle and .csv supported. Defaults to \"output.pickle\".",
             default="output.pickle"
         ),
-        argument("-f", "--format", type=str, help="In which data format suJSON data is stored in the output file."
-                                                  " Supported formats include: raw suJSON (suJSON) "
-                                                  "and Pandas DataFrame (Pandas). Defaults to \"suJSON\".")
+        argument(
+            "-f", "--format",
+            type=str,
+            help="In which data format suJSON data is stored in the output file. "
+                 "Supported formats include: raw suJSON (suJSON) "
+                 "and Pandas DataFrame (Pandas). Defaults to \"suJSON\".",
+            default="suJSON")
     ]
 )
 def export(_cli_args):
@@ -128,17 +132,13 @@ def export(_cli_args):
     if suffix not in [".json"]:
         raise SujsonError("Unsupported input file suffix {}".format(suffix))
 
-    if _cli_args.output is not None:
-        output_suffix = os.path.splitext(_cli_args.output)[1]
-        if output_suffix not in [".pickle"]:
-            raise SujsonError("Unsupported output file suffix {}".format(output_suffix))
+    output_suffix = os.path.splitext(_cli_args.output)[1]
+    if output_suffix not in [".pickle", ".csv"]:
+        raise SujsonError("Unsupported output file suffix {}".format(output_suffix))
 
-    if _cli_args.format is not None:
-        format_arg = _cli_args.format
-        if format_arg not in ["suJSON", "Pandas"]:
-            raise SujsonError("Unsupported format argument {} - possible 'suJSON' or 'Pandas'".format(format_arg))
-    else:
-        _cli_args.format = "suJSON"
+    format_arg = _cli_args.format
+    if format_arg not in ["suJSON", "Pandas"]:
+        raise SujsonError("Unsupported format argument {} - possible 'suJSON' or 'Pandas'".format(format_arg))
 
     is_export_successful = sujson.export(_cli_args.input, _cli_args.format, _cli_args.output)
 
