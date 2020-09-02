@@ -382,18 +382,18 @@ class Sujson:
         pickle.dump(self.sujson, outfile)
         outfile.close()
 
-
     def pandas_export(self):
         stimulus_id = []
         trial_id = []
         subject_id = []
         scores = []
 
-        # Iterate over all scores
+        # Iterate over all trials
         for trial in self.sujson['trials']:
-            for pvs, score in zip(trial['pvs_id'], trial['score_id']):
-                stimulus_id.append(pvs)
-                scores.append(score)
+            # TODO @awro1444 What if the same person scores the same stimulus two or more times?
+            for pvs_id, score_id in zip(trial['pvs_id'], trial['score_id']):
+                stimulus_id.append(pvs_id)
+                scores.append(score_id)  # TODO @awro1444 This way you are storing score ID and not a score itself
                 trial_id.append(trial['id'])
                 subject_id.append(trial['subject_id'])
 
@@ -403,21 +403,14 @@ class Sujson:
             # trial_id.append(trial['id'])
             # subject_id.append(trial['subject_id'])
 
+        scores_data_frame = pd.DataFrame({'stimulus_id': stimulus_id,
+                                          'subject_id': subject_id,
+                                          'trial_id': trial_id,
+                                          'score': scores})
 
-            # TODO @awro1444 What if the ordering of scores is not in line with the ordering of trials? What if there
-            #  are more scores related with a single trial? We need to implement a more sophisticated startegy of
-            #  retrieving scores related with a given trial.
-
-
-        # TODO @awro1444 Please change column headers to reflect the newest naming convention (see this comment:
-        #  https://github.com/LucjanJanowski/translator-to-suJSON/issues/15#issuecomment-627998489)
-        scores_data_frame = pd.DataFrame({'Stimulus id': stimulus_id,
-                                          'Subject id': subject_id,
-                                          'Trial id': trial_id,
-                                          'Score': scores})
-        #pickle.dump(scores_data_frame, outfile)
-        #outfile.close()
-        #print(scores_data_frame)
+        # pickle.dump(scores_data_frame, outfile)
+        # outfile.close()
+        # print(scores_data_frame)
         return scores_data_frame
 
     def export(self, input_file, output_format, output_file=None):
@@ -435,9 +428,12 @@ class Sujson:
             raise SujsonError("That is not a correct input path: {}".format(input_file))
 
         try:
+            # TODO @awro1444 Since we are using this file in more than one place I would close the IO interface to the
+            #  file only once in this function (currently it is done both here and in the
+            #  sujson._sujson.Sujson.raw_export function).
             outfile = open(output_file, 'wb')
         except FileNotFoundError:
-            raise SujsonError("That is not correct output path: {}".format(output_file))
+            raise SujsonError("That is not a correct output path: {}".format(output_file))
 
         if output_format == "suJSON":
             # exporting suJSON dictionary to pickle
@@ -451,6 +447,5 @@ class Sujson:
             else:
                 pickle.dump(df, outfile)
                 outfile.close()
-
 
         return True  # "suJSON file successfully exported to a pickle"
