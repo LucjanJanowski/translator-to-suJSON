@@ -123,8 +123,7 @@ def export(_cli_args):
     """
     Reads subjective data from a suJSON file and stores the data in a file format of choice
     """
-    # TODO @awro1444 Allow CSV file as another output format - this format should be used for storing the data in a way
-    #  allowing to read it from inside of Matlab
+    # TODO @awro1444 What happens if some asks for the suJSON format, but wants to store the result as a *.csv file?
     logger.debug("Ingesting with arguments: {}".format(_cli_args))
     sujson = Sujson(force=_cli_args.force, dry_run=_cli_args.dry_run)
 
