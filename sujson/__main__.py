@@ -139,6 +139,9 @@ def export(_cli_args):
     if format_arg not in ["suJSON", "Pandas"]:
         raise SujsonError("Unsupported format argument {} - possible 'suJSON' or 'Pandas'".format(format_arg))
 
+    if format_arg == "suJSON" and output_suffix == ".csv":
+        raise SujsonError("For suJSON format only .pickle file is allowed")
+
     is_export_successful = sujson.export(_cli_args.input, _cli_args.format, _cli_args.output)
 
     # Inform the user what is the status of the operation (did it go ok?)

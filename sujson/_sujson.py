@@ -380,7 +380,6 @@ class Sujson:
 
     def raw_export(self, outfile):
         pickle.dump(self.sujson, outfile)
-        outfile.close()
 
     def pandas_export(self):
         stimulus_id = []
@@ -391,20 +390,26 @@ class Sujson:
         # Iterate over all trials
         for trial in self.sujson['trials']:
             # TODO (optional) @awro1444 What if the same person scores the same stimulus two or more times?
-            for pvs_id, score_id in zip(trial['pvs_id'], trial['score_id']):
-                stimulus_id.append(pvs_id)
-                scores.append(score_id)  # TODO @awro1444 This way you are storing score ID and not a score itself
-                trial_id.append(trial['id'])
-                subject_id.append(trial['subject_id'])
+            if type(trial['pvs_id']) is list or type(trial['score_id']) is list:
+                for pvs_id, score_id in zip(trial['pvs_id'], trial['score_id']):
+                    stimulus_id.append(pvs_id)
+                    scores.append(self.sujson['scores'][score_id - 1]['score'])  # TODO @awro1444 This way you are storing score ID and not a score itself
+                    trial_id.append(trial['id'])
+                    subject_id.append(trial['subject_id'])
+            else:
+                for pvs_id, score_id in zip([trial['pvs_id']], [trial['score_id']]):
+                    stimulus_id.append(pvs_id)
+                    scores.append(self.sujson['scores'][score_id - 1]['score'])
+                    trial_id.append(trial['id'])
+                    subject_id.append(trial['subject_id'])
+
+
 
         scores_data_frame = pd.DataFrame({'stimulus_id': stimulus_id,
                                           'subject_id': subject_id,
                                           'trial_id': trial_id,
                                           'score': scores})
 
-        # pickle.dump(scores_data_frame, outfile)
-        # outfile.close()
-        # print(scores_data_frame)
         return scores_data_frame
 
     def export(self, input_file, output_format, output_file=None):
@@ -440,6 +445,7 @@ class Sujson:
                 df.to_csv(output_file)
             else:
                 pickle.dump(df, outfile)
-                outfile.close()
+
+        outfile.close()
 
         return True  # "suJSON file successfully exported to a pickle"
