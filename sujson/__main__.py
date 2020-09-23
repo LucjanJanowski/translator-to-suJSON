@@ -123,7 +123,6 @@ def export(_cli_args):
     """
     Reads subjective data from a suJSON file and stores the data in a file format of choice
     """
-    # TODO @awro1444 What happens if some asks for the suJSON format, but wants to store the result as a *.csv file?
     logger.debug("Ingesting with arguments: {}".format(_cli_args))
     sujson = Sujson(force=_cli_args.force, dry_run=_cli_args.dry_run)
 
@@ -140,7 +139,7 @@ def export(_cli_args):
         raise SujsonError("Unsupported format argument {} - possible 'suJSON' or 'Pandas'".format(format_arg))
 
     if format_arg == "suJSON" and output_suffix == ".csv":
-        raise SujsonError("For suJSON format only .pickle file is allowed")
+        raise SujsonError("For suJSON format only .pickle output file is allowed")
 
     is_export_successful = sujson.export(_cli_args.input, _cli_args.format, _cli_args.output)
 

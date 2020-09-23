@@ -389,21 +389,24 @@ class Sujson:
 
         # Iterate over all trials
         for trial in self.sujson['trials']:
-            # TODO (optional) @awro1444 What if the same person scores the same stimulus two or more times?
+            # TODO (optional) @awro1444 What if the same person scores the same stimulus two or more times? Please note
+            #  that in this situation you will have only one value under the "pvs_id" key, but a list of values under
+            #  the "score_id" key.
             if type(trial['pvs_id']) is list or type(trial['score_id']) is list:
+                # TODO (optional) @awro1444 What if in a single trial one person scores two stimuli at once? In other
+                #  words, what if one score is associated with two stimuli?
                 for pvs_id, score_id in zip(trial['pvs_id'], trial['score_id']):
                     stimulus_id.append(pvs_id)
-                    scores.append(self.sujson['scores'][score_id - 1]['score'])  # TODO @awro1444 This way you are storing score ID and not a score itself
+                    scores.append(self.sujson['scores'][score_id - 1]['score'])
                     trial_id.append(trial['id'])
                     subject_id.append(trial['subject_id'])
             else:
+                # TODO @awro1444 I am almost sure that this for loop is not necessary here
                 for pvs_id, score_id in zip([trial['pvs_id']], [trial['score_id']]):
                     stimulus_id.append(pvs_id)
                     scores.append(self.sujson['scores'][score_id - 1]['score'])
                     trial_id.append(trial['id'])
                     subject_id.append(trial['subject_id'])
-
-
 
         scores_data_frame = pd.DataFrame({'stimulus_id': stimulus_id,
                                           'subject_id': subject_id,
@@ -427,9 +430,6 @@ class Sujson:
             raise SujsonError("That is not a correct input path: {}".format(input_file))
 
         try:
-            # TODO @awro1444 Since we are using this file in more than one place I would close the IO interface to the
-            #  file only once in this function (currently it is done both here and in the
-            #  sujson._sujson.Sujson.raw_export function).
             outfile = open(output_file, 'wb')
         except FileNotFoundError:
             raise SujsonError("That is not a correct output path: {}".format(output_file))
