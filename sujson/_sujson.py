@@ -386,6 +386,10 @@ class Sujson:
         trial_id = []
         subject_id = []
         scores = []
+        timestamp = []
+        session_num = []
+        src = []
+        hrc = []
 
         # Iterate over all trials
         for trial in self.sujson['trials']:
@@ -400,18 +404,62 @@ class Sujson:
                     scores.append(self.sujson['scores'][score_id - 1]['score'])
                     trial_id.append(trial['id'])
                     subject_id.append(trial['subject_id'])
+                    try:
+                        timestamp.append(self.sujson['scores'][score_id - 1]['timestamp'])
+                    except KeyError:
+                        timestamp.append(None)
+                    try:
+                        session_num.append(trial['session_num'])
+                    except KeyError:
+                        session_num.append(None)
+
+                    src_id = self.sujson['pvs'][pvs_id - 1]['src_id']
+                    try:
+                        src.append(self.sujson['src'][src_id - 1]['name'])
+                    except KeyError:
+                        src.append(None)
+
+                    hrc_id = self.sujson['pvs'][pvs_id - 1]['hrc_id']
+                    try:
+                        hrc.append(self.sujson['hrc'][hrc_id - 1]['characteristics'])
+                    except KeyError:
+                        hrc.append(None)
+
             else:
-                # TODO @awro1444 I am almost sure that this for loop is not necessary here
-                for pvs_id, score_id in zip([trial['pvs_id']], [trial['score_id']]):
-                    stimulus_id.append(pvs_id)
-                    scores.append(self.sujson['scores'][score_id - 1]['score'])
-                    trial_id.append(trial['id'])
-                    subject_id.append(trial['subject_id'])
+                stimulus_id.append(trial['pvs_id'])
+                scores.append(self.sujson['scores'][trial['score_id'] - 1]['score'])
+                trial_id.append(trial['id'])
+                subject_id.append(trial['subject_id'])
+                try:
+                    timestamp.append(self.sujson['scores'][trial['score_id'] - 1]['timestamp'])
+                except KeyError:
+                    timestamp.append(None)
+                try:
+                    session_num.append(trial['session_num'])
+                except KeyError:
+                    session_num.append(None)
+
+                src_id = self.sujson['pvs'][trial['pvs_id'] - 1]['src_id']
+                try:
+                    src.append(self.sujson['src'][src_id - 1]['name'])
+                except KeyError:
+                    src.append(None)
+
+                hrc_id = self.sujson['pvs'][trial['pvs_id'] - 1]['hrc_id']
+                try:
+                    hrc.append(self.sujson['hrc'][hrc_id - 1]['characteristics'])
+                except KeyError:
+                    hrc.append(None)
+
 
         scores_data_frame = pd.DataFrame({'stimulus_id': stimulus_id,
                                           'subject_id': subject_id,
                                           'trial_id': trial_id,
-                                          'score': scores})
+                                          'score': scores,
+                                          'timestamp': timestamp,
+                                          'session_num': session_num,
+                                          'src': src,
+                                          'hrc': hrc})
 
         return scores_data_frame
 
