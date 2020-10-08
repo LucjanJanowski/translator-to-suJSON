@@ -2,6 +2,7 @@ import json
 import pandas as pd
 import numpy as np
 import pickle
+import os
 
 from . import __version__
 from ._errors import SujsonError
@@ -228,6 +229,7 @@ class Sujson:
             logger.warning("No config file given. We have to make many assumptions...")
 
     def import_xslx(self, input_file, output_file=None, config_file=None):
+        # TODO @Qub3k Simplify this function (probably by splitting it into multiple smaller functions)
         self._read_config(config_file)
 
         logger.info("Reading data from {}".format(input_file))
@@ -376,30 +378,122 @@ class Sujson:
         raise SujsonError("import_csv is not implemented yet!")
         # TODO import CSV file
 
-    def export(self, input_file, output_file=None):
-        # TODO export suJSON file
+    def raw_export(self, outfile):
+        pickle.dump(self.sujson, outfile)
 
+    def pandas_export(self):
+        stimulus_id = []
+        trial_id = []
+        subject_id = []
+        scores = []
+        timestamp = []
+        session_num = []
+        src = []
+        hrc = []
+
+        # Iterate over all trials
+        for trial in self.sujson['trials']:
+            # TODO (optional) @awro1444 What if the same person scores the same stimulus two or more times? Please note
+            #  that in this situation you will have only one value under the "pvs_id" key, but a list of values under
+            #  the "score_id" key.
+            if type(trial['pvs_id']) is list or type(trial['score_id']) is list:
+                # TODO (optional) @awro1444 What if in a single trial one person scores two stimuli at once? In other
+                #  words, what if one score is associated with two stimuli?
+                for pvs_id, score_id in zip(trial['pvs_id'], trial['score_id']):
+                    stimulus_id.append(pvs_id)
+                    scores.append(self.sujson['scores'][score_id - 1]['score'])
+                    trial_id.append(trial['id'])
+                    subject_id.append(trial['subject_id'])
+                    try:
+                        timestamp.append(self.sujson['scores'][score_id - 1]['timestamp'])
+                    except KeyError:
+                        timestamp.append(None)
+                    try:
+                        session_num.append(trial['session_num'])
+                    except KeyError:
+                        session_num.append(None)
+
+                    src_id = self.sujson['pvs'][pvs_id - 1]['src_id']
+                    try:
+                        src.append(self.sujson['src'][src_id - 1]['name'])
+                    except KeyError:
+                        src.append(None)
+
+                    hrc_id = self.sujson['pvs'][pvs_id - 1]['hrc_id']
+                    try:
+                        hrc.append(self.sujson['hrc'][hrc_id - 1]['characteristics'])
+                    except KeyError:
+                        hrc.append(None)
+
+            else:
+                stimulus_id.append(trial['pvs_id'])
+                scores.append(self.sujson['scores'][trial['score_id'] - 1]['score'])
+                trial_id.append(trial['id'])
+                subject_id.append(trial['subject_id'])
+                try:
+                    timestamp.append(self.sujson['scores'][trial['score_id'] - 1]['timestamp'])
+                except KeyError:
+                    timestamp.append(None)
+                try:
+                    session_num.append(trial['session_num'])
+                except KeyError:
+                    session_num.append(None)
+
+                src_id = self.sujson['pvs'][trial['pvs_id'] - 1]['src_id']
+                try:
+                    src.append(self.sujson['src'][src_id - 1]['name'])
+                except KeyError:
+                    src.append(None)
+
+                hrc_id = self.sujson['pvs'][trial['pvs_id'] - 1]['hrc_id']
+                try:
+                    hrc.append(self.sujson['hrc'][hrc_id - 1]['characteristics'])
+                except KeyError:
+                    hrc.append(None)
+
+
+        scores_data_frame = pd.DataFrame({'stimulus_id': stimulus_id,
+                                          'subject_id': subject_id,
+                                          'trial_id': trial_id,
+                                          'score': scores,
+                                          'timestamp': timestamp,
+                                          'session_num': session_num,
+                                          'src': src,
+                                          'hrc': hrc})
+
+        return scores_data_frame
+
+    def export(self, input_file, output_format, output_file=None):
+        """
+        Here goes the description...
+
+        :param input_file: ..
+        :param output_format: ..
+        :param output_file: ..
+        :return: status - True if successful, False otherwise
+        """
         try:
             self._read_sujson(input_file)
         except FileNotFoundError:
-            # TODO 1. Print out the path that is erroneous (i.e., input_file)
-            raise SujsonError("That is not correct input path")
+            raise SujsonError("That is not a correct input path: {}".format(input_file))
 
         try:
             outfile = open(output_file, 'wb')
         except FileNotFoundError:
-            # TODO 2. Print out the path that is erroneous (i.e., output_file)
-            raise SujsonError("That is not correct output path")
+            raise SujsonError("That is not a correct output path: {}".format(output_file))
 
-        # TODO 3. Pickle the actual suJSON data read (and not an exemplary dictionary)
-        some_dict = {'a': self.sujson['dataset_name'], 'b': [5, 6], 'c': {'ac': 7}}
-        pickle.dump(some_dict, outfile)
+        if output_format == "suJSON":
+            # exporting suJSON dictionary to pickle
+            self.raw_export(outfile)
+
+        if output_format == "Pandas":
+            # exporting to pickle as Pandas Data Frame
+            df = self.pandas_export()
+            if os.path.splitext(output_file)[1] in [".csv"]:
+                df.to_csv(output_file)
+            else:
+                pickle.dump(df, outfile)
+
         outfile.close()
 
-        # TODO 4. Remove the test code below
-        infile = open(output_file, 'rb')
-        new_dict = pickle.load(infile)
-        infile.close()
-        print(new_dict)
-
-        # TODO 5. Return some status code to notify the caller that everything went well
+        return True  # "suJSON file successfully exported to a pickle"

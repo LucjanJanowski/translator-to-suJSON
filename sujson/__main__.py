@@ -46,19 +46,20 @@ def subcommand(_args=[], parent=subparsers):
     parses arguments so that it can be called directly like so:
         args = parser.parse_args()
         args.func(args)
+
     Usage example::
         @subcommand([argument("-d", help="Enable debug mode", action="store_true")])
         def subcommand(args):
             print(args)
+
     Then on the command line::
         $ python parser.py subcommand -d
     """
-
     def decorator(func):
-        parser = parent.add_parser(func.__name__, description=func.__doc__)
+        _parser = parent.add_parser(func.__name__, description=func.__doc__)
         for arg in _args:
-            parser.add_argument(*arg[0], **arg[1])
-        parser.set_defaults(func=func)
+            _parser.add_argument(*arg[0], **arg[1])
+        _parser.set_defaults(func=func)
 
     return decorator
 
@@ -106,31 +107,51 @@ def ingest(_args):
 @subcommand(
     [
         argument("input", type=str, help="Input suJSON file"),
-        argument("output",
-                 type=str,
-                 help="Output file path, currently only .pickle files are supported.",
-                 ),
+        argument(
+            "-o",
+            "--output",
+            type=str,
+            help="Output file, currently .pickle and .csv supported. Defaults to \"output.pickle\".",
+            default="output.pickle"
+        ),
+        argument(
+            "-f", "--format",
+            type=str,
+            help="In which data format suJSON data is stored in the output file. "
+                 "Supported formats include: raw suJSON (suJSON) "
+                 "and Pandas DataFrame (Pandas). Defaults to \"suJSON\".",
+            default="suJSON")
     ]
 )
-def export(_args):
+def export(_cli_args):
     """
     Reads subjective data from a suJSON file and stores the data in a file format of choice
     """
-    logger.debug("Ingesting with arguments: {}".format(_args))
-    sujson = Sujson(force=_args.force, dry_run=_args.dry_run)
+    logger.debug("Ingesting with arguments: {}".format(_cli_args))
+    sujson = Sujson(force=_cli_args.force, dry_run=_cli_args.dry_run)
 
-    suffix = os.path.splitext(_args.input)[1]
-    output_suffix = os.path.splitext(_args.output)[1]
-
+    suffix = os.path.splitext(_cli_args.input)[1]
     if suffix not in [".json"]:
         raise SujsonError("Unsupported input file suffix {}".format(suffix))
 
-    if output_suffix not in [".pickle"]:
+    output_suffix = os.path.splitext(_cli_args.output)[1]
+    if output_suffix not in [".pickle", ".csv"]:
         raise SujsonError("Unsupported output file suffix {}".format(output_suffix))
 
-    sujson.export(_args.input, _args.output)
+    format_arg = _cli_args.format
+    if format_arg not in ["suJSON", "Pandas"]:
+        raise SujsonError("Unsupported format argument {} - possible 'suJSON' or 'Pandas'".format(format_arg))
 
-    # TODO 6. Inform the user what is the status of the operation (did it go ok?)
+    if format_arg == "suJSON" and output_suffix == ".csv":
+        raise SujsonError("For suJSON format only .pickle output file is allowed")
+
+    is_export_successful = sujson.export(_cli_args.input, _cli_args.format, _cli_args.output)
+
+    # Inform the user what is the status of the operation (did it go ok?)
+    if is_export_successful:
+        logger.info("Export finished with success")
+    else:
+        logger.error("Exporting failed")
 
 
 if __name__ == "__main__":

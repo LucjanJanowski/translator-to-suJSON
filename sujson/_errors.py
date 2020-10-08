@@ -1,7 +1,9 @@
 import sys
 import logging
 from ._logger import setup_custom_logger
+
 logger = setup_custom_logger('sujson')
+
 
 class SujsonError(Exception):
     def __init__(self, message):
