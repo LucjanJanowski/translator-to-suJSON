@@ -31,10 +31,11 @@ subparsers = parser.add_subparsers(dest="subcommand")
 
 
 def argument(*name_or_flags, **kwargs):
-    """Convenience function to properly format arguments to pass to the
+    """
+    Convenience function to properly format arguments to pass to the
     subcommand decorator.
     """
-    return (list(name_or_flags), kwargs)
+    return list(name_or_flags), kwargs
 
 
 # https://gist.github.com/mivade/384c2c41c3a29c637cb6c603d4197f9f
@@ -42,7 +43,7 @@ def subcommand(_args=[], parent=subparsers):
     """
     Decorator to define a new subcommand in a sanity-preserving way.
     The function will be stored in the ``func`` variable when the parser
-    parses arguments so that it can be called directly like so::
+    parses arguments so that it can be called directly like so:
         args = parser.parse_args()
         args.func(args)
 
@@ -78,6 +79,9 @@ def subcommand(_args=[], parent=subparsers):
     ]
 )
 def ingest(_args):
+    """
+    Read a file with subjective data and store its contents in a *.sujson file
+    """
     logger.debug("Ingesting with arguments: {}".format(_args))
     sujson = Sujson(force=_args.force, dry_run=_args.dry_run)
 
