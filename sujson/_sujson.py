@@ -439,6 +439,7 @@ class Sujson:
                 except KeyError:
                     session_num.append(None)
 
+                # FIXME Fix the problem with suJSONs that do not have the "src_id" key
                 src_id = self.sujson['pvs'][trial['pvs_id'] - 1]['src_id']
                 try:
                     src.append(self.sujson['src'][src_id - 1]['name'])
