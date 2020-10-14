@@ -240,6 +240,9 @@ class Sujson:
             skipfooter=self.config["footer_rows_to_skip"],
         )
 
+        # TODO @matix7290 Implement here the heuristics to detect whether we are dealing with tidy or non-tidy data.
+        #  Start from checking the number of rows in the wb DataFrame.
+
         # Create list of unique src
 
         self.sujson = self._json_structure()
