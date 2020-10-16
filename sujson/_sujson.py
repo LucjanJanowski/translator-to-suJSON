@@ -1,4 +1,6 @@
 import json
+from typing import List
+
 import pandas as pd
 import numpy as np
 import pickle
@@ -243,6 +245,47 @@ class Sujson:
         # TODO @matix7290 Implement here the heuristics to detect whether we are dealing with tidy or non-tidy data.
         #  Start from checking the number of rows in the wb DataFrame.
 
+        points = 0
+
+        # Case No.1 number of row greater than 400
+
+        if len(wb) >= 400:
+            logger.info("Probably file is tidy")
+            points += 1
+
+        # Case No.2 Columns' names contain subject, user etc.
+
+        names = ["subject", "subjects", "user", "users"]
+        colNames = 0
+        for col in wb.columns:
+            for i in range(0, len(names)):
+                if col.lower().find(names[i]) != -1:
+                    colNames += 1
+
+        if colNames <= 1:
+            logger.info("Probably file is tidy")
+            points += 1
+
+        # Case No.3 Unique
+
+        uq = []
+        av = 0
+        for col in wb.columns:
+            uq.append(len(wb[col].unique())/len(wb[col]))
+
+        for i in range(0, len(uq)):
+            if uq[i] < 0.5:
+                av += 1
+        if av >= len(uq)/2:
+            points += 1
+
+        # Final results check
+
+        if points >= 2:
+            print("It's probably tidy file")
+        else:
+            print("It's probably non-tidy file")
+
         # Create list of unique src
 
         self.sujson = self._json_structure()
@@ -454,7 +497,6 @@ class Sujson:
                     hrc.append(self.sujson['hrc'][hrc_id - 1]['characteristics'])
                 except KeyError:
                     hrc.append(None)
-
 
         scores_data_frame = pd.DataFrame({'stimulus_id': stimulus_id,
                                           'subject_id': subject_id,
