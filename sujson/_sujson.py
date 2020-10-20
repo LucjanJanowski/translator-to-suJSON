@@ -230,6 +230,18 @@ class Sujson:
         else:
             logger.warning("No config file given. We have to make many assumptions...")
 
+    def _detect_if_tidy(self, input_data: pd.DataFrame):
+        """
+        Some doc comment...
+
+        TODO @matix7290 Document what this function does.
+
+        :param input_data: a DataFrame created by Pandas when reading the input XLS file
+        :return: Ture if probably tidy, False otherwise
+        """
+        # TODO @matix7290 Move the heuristics of detecting tidy data here
+        return True
+
     def import_xslx(self, input_file, output_file=None, config_file=None):
         # TODO @Qub3k Simplify this function (probably by splitting it into multiple smaller functions)
         self._read_config(config_file)
@@ -242,8 +254,8 @@ class Sujson:
             skipfooter=self.config["footer_rows_to_skip"],
         )
 
-        # TODO @matix7290 Implement here the heuristics to detect whether we are dealing with tidy or non-tidy data.
-        #  Start from checking the number of rows in the wb DataFrame.
+        # TODO @matix7290 Move your implementation below to the _detect_if_tidy function
+        self._detect_if_tidy(wb)
 
         points = 0
 
@@ -256,6 +268,11 @@ class Sujson:
         # Case No.2 Columns' names contain subject, user etc.
 
         names = ["subject", "subjects", "user", "users"]
+        # TODO @matix7290 Try to rewrite your code using more pythonic style (see exemplary solution below)
+        # for col in wb.columns:
+        #     is_nontidy_col = [col.lower().find(nontidy_name) != -1 for nontidy_name in names]
+        #     logger.info("Is {col_name} potentially non-tidy? {answer}".format(col_name=col,
+        #       answer=any(is_nontidy_col)))
         colNames = 0
         for col in wb.columns:
             for i in range(0, len(names)):
@@ -268,8 +285,13 @@ class Sujson:
 
         # Case No.3 Unique
 
+        # TODO @matix7290 Either use more readable variables names or add a short comment explaining what you mean by
+        #  "uq" and "av"
         uq = []
         av = 0
+        # TODO @matix7290 Rewrite the code to make it use the pandas.DataFrame.items iterator (see this link for more
+        #  details: https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.items.html#pandas.DataFrame.items)
+        # TODO @matix7290 Make sure the code below is run only for columns with textual data
         for col in wb.columns:
             uq.append(len(wb[col].unique())/len(wb[col]))
 
