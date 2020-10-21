@@ -39,6 +39,19 @@ class Sujson:
             "scores": [],
         }
 
+        self.dataframe = {
+            "stimulus_id": [],
+            "trial_id": [],
+            "subject_id": [],
+            "scores": [],
+            "timestamp": [],
+            "session_num": [],
+            "order_num": [],
+            "subject": [],
+            "src": [],
+            "hrc": [],
+        }
+
     def _write_data_to_json(self, output_file):
         # resolve numpy type problem
         def default_converter(o):
@@ -384,15 +397,39 @@ class Sujson:
     def raw_export(self, outfile):
         pickle.dump(self.sujson, outfile)
 
+    def find_by_value(self, dict_key, dict_value, searched_list):
+        index = 0
+        for i in searched_list:
+            if i.get(dict_key) == dict_value:
+                return index
+            index = index + 1
+        return None
+
+    def build_dataframe(self, trial, pvs_id, score_id):
+
+        self.dataframe['stimulus_id'].append(pvs_id)
+        self.dataframe['scores'].append(self.sujson['scores'][self.find_by_value('id', score_id, self.sujson['scores'])]
+                                        ['score'])
+        self.dataframe['trial_id'].append(trial['id'])
+        self.dataframe['subject_id'].append(trial['subject_id'])
+        self.dataframe['timestamp'].append(self.sujson['scores']
+                                           [self.find_by_value('id', score_id, self.sujson['scores'])].get('timestamp'))
+        self.dataframe['session_num'].append(trial.get('session_num'))
+        self.dataframe['order_num'].append(trial.get('order_num'))
+
+        self.dataframe['subject'].append(self.sujson['subjects']
+                                         [self.find_by_value('id', trial['subject_id'], self.sujson['subjects'])]
+                                         .get('characteristics'))
+
+        src_id = self.sujson['pvs'][self.find_by_value('id', pvs_id, self.sujson['pvs'])]['src_id']
+        hrc_id = self.sujson['pvs'][self.find_by_value('id', pvs_id, self.sujson['pvs'])]['hrc_id']
+
+        self.dataframe['src'].append(self.sujson['src'][self.find_by_value('id', src_id, self.sujson['src'])]
+                                     .get('name'))
+        self.dataframe['hrc'].append(self.sujson['hrc'][self.find_by_value('id', hrc_id, self.sujson['hrc'])]
+                                     .get('characteristics'))
+
     def pandas_export(self):
-        stimulus_id = []
-        trial_id = []
-        subject_id = []
-        scores = []
-        timestamp = []
-        session_num = []
-        src = []
-        hrc = []
 
         # Iterate over all trials
         for trial in self.sujson['trials']:
@@ -403,67 +440,36 @@ class Sujson:
                 # TODO (optional) @awro1444 What if in a single trial one person scores two stimuli at once? In other
                 #  words, what if one score is associated with two stimuli?
                 for pvs_id, score_id in zip(trial['pvs_id'], trial['score_id']):
-                    stimulus_id.append(pvs_id)
-                    scores.append(self.sujson['scores'][score_id - 1]['score'])
-                    trial_id.append(trial['id'])
-                    subject_id.append(trial['subject_id'])
-                    try:
-                        timestamp.append(self.sujson['scores'][score_id - 1]['timestamp'])
-                    except KeyError:
-                        timestamp.append(None)
-                    try:
-                        session_num.append(trial['session_num'])
-                    except KeyError:
-                        session_num.append(None)
 
-                    src_id = self.sujson['pvs'][pvs_id - 1]['src_id']
-                    try:
-                        src.append(self.sujson['src'][src_id - 1]['name'])
-                    except KeyError:
-                        src.append(None)
-
-                    hrc_id = self.sujson['pvs'][pvs_id - 1]['hrc_id']
-                    try:
-                        hrc.append(self.sujson['hrc'][hrc_id - 1]['characteristics'])
-                    except KeyError:
-                        hrc.append(None)
+                    self.build_dataframe(trial, pvs_id, score_id)
 
             else:
-                stimulus_id.append(trial['pvs_id'])
-                scores.append(self.sujson['scores'][trial['score_id'] - 1]['score'])
-                trial_id.append(trial['id'])
-                subject_id.append(trial['subject_id'])
-                try:
-                    timestamp.append(self.sujson['scores'][trial['score_id'] - 1]['timestamp'])
-                except KeyError:
-                    timestamp.append(None)
-                try:
-                    session_num.append(trial['session_num'])
-                except KeyError:
-                    session_num.append(None)
+                self.build_dataframe(trial, trial['pvs_id'], trial['score_id'])
 
-                # FIXME Fix the problem with suJSONs that do not have the "src_id" key
-                src_id = self.sujson['pvs'][trial['pvs_id'] - 1]['src_id']
-                try:
-                    src.append(self.sujson['src'][src_id - 1]['name'])
-                except KeyError:
-                    src.append(None)
+                # # FIXME Fix the problem with suJSONs that do not have the "src_id" key
 
-                hrc_id = self.sujson['pvs'][trial['pvs_id'] - 1]['hrc_id']
-                try:
-                    hrc.append(self.sujson['hrc'][hrc_id - 1]['characteristics'])
-                except KeyError:
-                    hrc.append(None)
+        scores_data_frame = pd.DataFrame({'stimulus_id': self.dataframe['stimulus_id'],
+                                          'subject_id': self.dataframe['subject_id'],
+                                          'trial_id': self.dataframe['trial_id'],
+                                          'score': self.dataframe['scores'],
+                                          'timestamp': self.dataframe['timestamp'],
+                                          'session_num': self.dataframe['session_num'],
+                                          'order_num': self.dataframe['order_num'],
+                                          'src': self.dataframe['src']})
 
+        for characteristic in self.dataframe['hrc']:
+            if characteristic is not None:
+                for value in characteristic:
+                    scores_data_frame['hrc: ' + value] = characteristic.get(value)
+            else:
+                scores_data_frame['hrc'] = None
 
-        scores_data_frame = pd.DataFrame({'stimulus_id': stimulus_id,
-                                          'subject_id': subject_id,
-                                          'trial_id': trial_id,
-                                          'score': scores,
-                                          'timestamp': timestamp,
-                                          'session_num': session_num,
-                                          'src': src,
-                                          'hrc': hrc})
+        for characteristic in self.dataframe['subject']:
+            if characteristic is not None:
+                for value in characteristic:
+                    scores_data_frame['subject: ' + value] = characteristic.get(value)
+            else:
+                scores_data_frame['subject'] = None
 
         return scores_data_frame
 
