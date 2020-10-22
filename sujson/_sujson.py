@@ -1,12 +1,10 @@
 import json
-from typing import List, Optional, Tuple, Hashable, Any
+from typing import List
 
 import pandas as pd
 import numpy as np
 import pickle
 import os
-
-from pandas import Series
 
 from . import __version__
 from ._errors import SujsonError
