@@ -1,10 +1,12 @@
 import json
-from typing import List
+from typing import List, Optional, Tuple, Hashable, Any
 
 import pandas as pd
 import numpy as np
 import pickle
 import os
+
+from pandas import Series
 
 from . import __version__
 from ._errors import SujsonError
@@ -232,15 +234,48 @@ class Sujson:
 
     def _detect_if_tidy(self, input_data: pd.DataFrame):
         """
-        Some doc comment...
-
-        TODO @matix7290 Document what this function does.
+        Checking if the input file is tidy or non-tidy. Function use some heuristics conditions.
 
         :param input_data: a DataFrame created by Pandas when reading the input XLS file
         :return: Ture if probably tidy, False otherwise
         """
-        # TODO @matix7290 Move the heuristics of detecting tidy data here
-        return True
+        points = 0
+
+        # Case No.1 number of rows greater than 400
+        # I have changed number of rows up to 1000 because the 2nd non-tidy have 800-something rows
+
+        if len(input_data) >= 1000:
+            points += 1
+            print(1)
+
+        # Case No.2 Columns' names contain subject, user etc.
+
+        names = ["subject", "subjects", "user", "users"]
+        is_tidy = []
+
+        for col in input_data.select_dtypes(include='object').columns:
+            is_tidy_col = [col.lower().find(notify_name) == -1 for notify_name in names]
+            is_tidy.append(all(is_tidy_col))
+
+        if is_tidy.count("False") <= 1:
+            points += 1
+            print(2)
+
+        # Case No.3 Unique
+
+        unique_value = [len(content[1].unique()) / len(content[1]) < 0.5 for content in
+                        input_data.select_dtypes(include='object').items()]
+
+        if all(unique_value):
+            points += 1
+            print(3)
+
+        # Final results check
+
+        if points >= 2:
+            return True, points
+        else:
+            return False, points
 
     def import_xslx(self, input_file, output_file=None, config_file=None):
         # TODO @Qub3k Simplify this function (probably by splitting it into multiple smaller functions)
@@ -254,59 +289,8 @@ class Sujson:
             skipfooter=self.config["footer_rows_to_skip"],
         )
 
-        # TODO @matix7290 Move your implementation below to the _detect_if_tidy function
-        self._detect_if_tidy(wb)
-
-        points = 0
-
-        # Case No.1 number of row greater than 400
-
-        if len(wb) >= 400:
-            logger.info("Probably file is tidy")
-            points += 1
-
-        # Case No.2 Columns' names contain subject, user etc.
-
-        names = ["subject", "subjects", "user", "users"]
-        # TODO @matix7290 Try to rewrite your code using more pythonic style (see exemplary solution below)
-        # for col in wb.columns:
-        #     is_nontidy_col = [col.lower().find(nontidy_name) != -1 for nontidy_name in names]
-        #     logger.info("Is {col_name} potentially non-tidy? {answer}".format(col_name=col,
-        #       answer=any(is_nontidy_col)))
-        colNames = 0
-        for col in wb.columns:
-            for i in range(0, len(names)):
-                if col.lower().find(names[i]) != -1:
-                    colNames += 1
-
-        if colNames <= 1:
-            logger.info("Probably file is tidy")
-            points += 1
-
-        # Case No.3 Unique
-
-        # TODO @matix7290 Either use more readable variables names or add a short comment explaining what you mean by
-        #  "uq" and "av"
-        uq = []
-        av = 0
-        # TODO @matix7290 Rewrite the code to make it use the pandas.DataFrame.items iterator (see this link for more
-        #  details: https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.items.html#pandas.DataFrame.items)
-        # TODO @matix7290 Make sure the code below is run only for columns with textual data
-        for col in wb.columns:
-            uq.append(len(wb[col].unique())/len(wb[col]))
-
-        for i in range(0, len(uq)):
-            if uq[i] < 0.5:
-                av += 1
-        if av >= len(uq)/2:
-            points += 1
-
-        # Final results check
-
-        if points >= 2:
-            print("It's probably tidy file")
-        else:
-            print("It's probably non-tidy file")
+        # self._detect_if_tidy(wb)
+        print(self._detect_if_tidy(wb))
 
         # Create list of unique src
 
