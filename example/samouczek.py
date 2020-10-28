@@ -1,6 +1,8 @@
 from sujson._sujson import Sujson
 import os
 
+# TODO @awro1444 Ideally, everything that we need to use here should be available in the repo. In other words, please
+#  make the code more portable
 sujson = Sujson()
 sujson_file = 'D:\\translator-to-suJSON-master\hdtv1.json'
 sujson._read_sujson(sujson_file)

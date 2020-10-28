@@ -4,7 +4,12 @@ import os
 import pandas as pd
 from sujson._errors import SujsonError
 
+# TODO @awro1444 Please change the name of this file to test_export.py
+
+
 class ExportTests(unittest.TestCase):
+    # TODO @awro1444 Put these lines into the constructor or into the setUp() function
+    # TODO @awro1444 Make sure the code is portable. Please add any relevant files to the repo
     sujson = Sujson()
     incorrect_file_path = 'D:\\incorrect\hdtv1.json'
     input_file_path = 'D:\\translator-to-suJSON-master\hdtv5.json'
@@ -45,11 +50,7 @@ class ExportTests(unittest.TestCase):
             self.sujson.export(self.incorrect_file_path, self.sujson_format, self.output_csv)
 
     def test_export_incorrect_output_file(self):
-        self.assertRaises(SujsonError, self.sujson.export(self.input_file_path, self.sujson_format, self.incorrect_file_path))
+        self.assertRaises(SujsonError,
+                          self.sujson.export(self.input_file_path, self.sujson_format, self.incorrect_file_path))
 
-
-
-
-
-
-
+# TODO @awro1444 We are missing the main function :)

@@ -421,6 +421,8 @@ class Sujson:
                                          [self.find_by_value('id', trial['subject_id'], self.sujson['subjects'])]
                                          .get('characteristics'))
 
+        # TODO @awro1444 Are you sure this will not cause the exception? Instead of referring to the "src_id" key
+        #  directly use the get() method
         src_id = self.sujson['pvs'][self.find_by_value('id', pvs_id, self.sujson['pvs'])]['src_id']
         hrc_id = self.sujson['pvs'][self.find_by_value('id', pvs_id, self.sujson['pvs'])]['hrc_id']
 
