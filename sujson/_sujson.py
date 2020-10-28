@@ -424,10 +424,17 @@ class Sujson:
         src_id = self.sujson['pvs'][self.find_by_value('id', pvs_id, self.sujson['pvs'])]['src_id']
         hrc_id = self.sujson['pvs'][self.find_by_value('id', pvs_id, self.sujson['pvs'])]['hrc_id']
 
-        self.dataframe['src'].append(self.sujson['src'][self.find_by_value('id', src_id, self.sujson['src'])]
-                                     .get('name'))
-        self.dataframe['hrc'].append(self.sujson['hrc'][self.find_by_value('id', hrc_id, self.sujson['hrc'])]
-                                     .get('characteristics'))
+        if src_id is not None:
+            self.dataframe['src'].append(self.sujson['src'][self.find_by_value('id', src_id, self.sujson['src'])]
+                                         .get('name'))
+        else:
+            self.dataframe['src'].append(None)
+
+        if hrc_id is not None:
+            self.dataframe['hrc'].append(self.sujson['hrc'][self.find_by_value('id', hrc_id, self.sujson['hrc'])]
+                                         .get('characteristics'))
+        else:
+            self.dataframe['hrc'].append(None)
 
     def pandas_export(self):
 
