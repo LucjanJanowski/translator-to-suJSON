@@ -139,3 +139,4 @@ Authors:
 - Łukasz Dzierwa
 - Mikołaj Duda
 - Anna Wróblewska
+- Mateusz Olszewski
