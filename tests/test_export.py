@@ -10,13 +10,15 @@ from sujson._errors import SujsonError
 class ExportTests(unittest.TestCase):
     # TODO @awro1444 Put these lines into the constructor or into the setUp() function
     # TODO @awro1444 Make sure the code is portable. Please add any relevant files to the repo
-    sujson = Sujson()
-    incorrect_file_path = 'D:\\incorrect\hdtv1.json'
-    input_file_path = 'D:\\translator-to-suJSON-master\hdtv5.json'
-    sujson_format = 'suJSON'
-    pandas_format = 'Pandas'
-    output_csv = 'example\output.csv'
-    output_pickle = 'example\output.pickle'
+
+    def setUp(self):
+        self.sujson = Sujson()
+        self.incorrect_file_path = 'example\incorrect\hdtv1.json'
+        self.input_file_path = 'example\hdtv5.json'
+        self.sujson_format = 'suJSON'
+        self.pandas_format = 'Pandas'
+        self.output_csv = 'example\output.csv'
+        self.output_pickle = 'example\output.pickle'
 
     def tearDown(self):
         if os.path.exists(self.output_csv):
@@ -46,11 +48,13 @@ class ExportTests(unittest.TestCase):
         self.assertTrue(isinstance(df, pd.DataFrame))
 
     def test_export_incorrect_input_file(self):
-        with self.assertRaises(SujsonError):
+        with self.assertRaises(SystemExit):
             self.sujson.export(self.incorrect_file_path, self.sujson_format, self.output_csv)
 
     def test_export_incorrect_output_file(self):
-        self.assertRaises(SujsonError,
-                          self.sujson.export(self.input_file_path, self.sujson_format, self.incorrect_file_path))
+        with self.assertRaises(SystemExit):
+            self.sujson.export(self.input_file_path, self.sujson_format, self.incorrect_file_path)
 
-# TODO @awro1444 We are missing the main function :)
+
+if __name__ == '__main__':
+    unittest.main()
