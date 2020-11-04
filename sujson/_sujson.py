@@ -398,6 +398,16 @@ class Sujson:
         pickle.dump(self.sujson, outfile)
 
     def find_by_value(self, dict_key, dict_value, searched_list):
+        """
+        TODO @awro1444 Can you please fill in the description of this function? The function is really cool, but it
+         took me several minutes to eventually understand how it works. I am guessing other developers will have similar
+         problems. :)
+
+        :param dict_key:
+        :param dict_value:
+        :param searched_list:
+        :return:
+        """
         index = 0
         for i in searched_list:
             if i.get(dict_key) == dict_value:
