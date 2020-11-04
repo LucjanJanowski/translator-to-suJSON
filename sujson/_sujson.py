@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 import pickle
 import os
+import csv
+import pprint
 
 from . import __version__
 from ._errors import SujsonError
@@ -391,8 +393,37 @@ class Sujson:
 
     def import_csv(self, input_file, output_file=None, config_file=None):
         self._read_config(config_file)
-        raise SujsonError("import_csv is not implemented yet!")
         # TODO import CSV file
+        try:
+            open(input_file, newline='')
+        except FileNotFoundError:
+            raise SujsonError("That is not a correct output path: {}".format(output_file))
+
+        infile = pd.read_csv(input_file)
+        for pvs in infile.get('PVS_ID').unique():
+            pvs_name = pvs.split('_')[0]
+            pvs_id = pvs.split('_')[1]
+            self.sujson.get('pvs').append({'id': pvs_id, 'name': pvs_name})
+
+        for subject in infile.get('Tester_id').unique():
+            self.sujson.get('subjects').append({'id': subject})
+
+        score_id = 0
+        trial_id = 0
+        for index, row in infile.iterrows():
+            self.sujson.get('trials').append(
+                {'id': trial_id,
+                 'subject_id': row.get('Tester_id'),
+                 'task_id': 1,
+                 'pvs_id': row.get('PVS_ID').split('_')[1],
+                 'score_id': score_id}
+            )
+            self.sujson.get('scores').append({'id': score_id, 'score': row.get('Score')})
+            score_id = score_id+1
+            trial_id = trial_id+1
+
+        pprint.pprint(self.sujson)
+
 
     def raw_export(self, outfile):
         pickle.dump(self.sujson, outfile)
@@ -433,8 +464,8 @@ class Sujson:
 
         # TODO @awro1444 Are you sure this will not cause the exception? Instead of referring to the "src_id" key
         #  directly use the get() method
-        src_id = self.sujson['pvs'][self.find_by_value('id', pvs_id, self.sujson['pvs'])]['src_id']
-        hrc_id = self.sujson['pvs'][self.find_by_value('id', pvs_id, self.sujson['pvs'])]['hrc_id']
+        src_id = self.sujson['pvs'][self.find_by_value('id', pvs_id, self.sujson['pvs'])].get('src_id')
+        hrc_id = self.sujson['pvs'][self.find_by_value('id', pvs_id, self.sujson['pvs'])].get('hrc_id')
 
         if src_id is not None:
             self.dataframe['src'].append(self.sujson['src'][self.find_by_value('id', src_id, self.sujson['src'])]
@@ -503,13 +534,13 @@ class Sujson:
         """
         try:
             self._read_sujson(input_file)
-        except FileNotFoundError:
-            raise SujsonError("That is not a correct input path: {}".format(input_file))
+        except FileNotFoundError as e:
+            raise SujsonError("That is not a correct input path: {}".format(input_file)) from e
 
         try:
             outfile = open(output_file, 'wb')
-        except FileNotFoundError:
-            raise SujsonError("That is not a correct output path: {}".format(output_file))
+        except FileNotFoundError as e:
+            raise SujsonError("That is not a correct output path: {}".format(output_file)) from e
 
         if output_format == "suJSON":
             # exporting suJSON dictionary to pickle
