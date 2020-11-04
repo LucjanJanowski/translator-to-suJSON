@@ -394,6 +394,8 @@ class Sujson:
     def import_csv(self, input_file, output_file=None, config_file=None):
         self._read_config(config_file)
         # TODO import CSV file
+        # TODO @awro1444 Make use of the configuration file
+        # TODO (future) Use the heuristics detecting whether we are dealing with a tidy input
         try:
             open(input_file, newline='')
         except FileNotFoundError:
@@ -462,8 +464,6 @@ class Sujson:
                                          [self.find_by_value('id', trial['subject_id'], self.sujson['subjects'])]
                                          .get('characteristics'))
 
-        # TODO @awro1444 Are you sure this will not cause the exception? Instead of referring to the "src_id" key
-        #  directly use the get() method
         src_id = self.sujson['pvs'][self.find_by_value('id', pvs_id, self.sujson['pvs'])].get('src_id')
         hrc_id = self.sujson['pvs'][self.find_by_value('id', pvs_id, self.sujson['pvs'])].get('hrc_id')
 
