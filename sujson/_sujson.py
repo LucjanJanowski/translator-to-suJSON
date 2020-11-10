@@ -1,4 +1,6 @@
 import json
+from typing import List
+
 import pandas as pd
 import numpy as np
 import pickle
@@ -228,6 +230,51 @@ class Sujson:
         else:
             logger.warning("No config file given. We have to make many assumptions...")
 
+    def _detect_if_tidy(self, input_data: pd.DataFrame):
+        """
+        Checking if the input file is tidy or non-tidy. Function use some heuristics conditions.
+
+        :param input_data: a DataFrame created by Pandas when reading the input XLS file
+        :return: Ture if probably tidy, False otherwise
+        """
+        points = 0
+
+        # Case No.1 number of rows greater than 400
+        # I have changed number of rows up to 1000 because the 2nd non-tidy have 800-something rows
+
+        if len(input_data) >= 1000:
+            points += 1
+            print(1)
+
+        # Case No.2 Columns' names contain subject, user etc.
+
+        names = ["subject", "subjects", "user", "users"]
+        is_tidy = []
+
+        for col in input_data.select_dtypes(include='object').columns:
+            is_tidy_col = [col.lower().find(notify_name) == -1 for notify_name in names]
+            is_tidy.append(all(is_tidy_col))
+
+        if is_tidy.count("False") <= 1:
+            points += 1
+            print(2)
+
+        # Case No.3 Unique
+
+        unique_value = [len(content[1].unique()) / len(content[1]) < 0.5 for content in
+                        input_data.select_dtypes(include='object').items()]
+
+        if all(unique_value):
+            points += 1
+            print(3)
+
+        # Final results check
+
+        if points >= 2:
+            return True, points
+        else:
+            return False, points
+
     def import_xslx(self, input_file, output_file=None, config_file=None):
         # TODO @Qub3k Simplify this function (probably by splitting it into multiple smaller functions)
         self._read_config(config_file)
@@ -240,8 +287,8 @@ class Sujson:
             skipfooter=self.config["footer_rows_to_skip"],
         )
 
-        # TODO @matix7290 Implement here the heuristics to detect whether we are dealing with tidy or non-tidy data.
-        #  Start from checking the number of rows in the wb DataFrame.
+        # self._detect_if_tidy(wb)
+        print(self._detect_if_tidy(wb))
 
         # Create list of unique src
 
@@ -454,7 +501,6 @@ class Sujson:
                     hrc.append(self.sujson['hrc'][hrc_id - 1]['characteristics'])
                 except KeyError:
                     hrc.append(None)
-
 
         scores_data_frame = pd.DataFrame({'stimulus_id': stimulus_id,
                                           'subject_id': subject_id,
