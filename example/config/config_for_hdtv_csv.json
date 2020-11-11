@@ -1,0 +1,59 @@
+{
+  "src_hdr_name": "SRC_id",
+  "hrc_hdr_name": "HRC_id",
+  "file_hdr_name": "File",
+  "pvs_hdr_name": "PVS_id",
+  "is_tidy": true,
+  "subject_column_name": "Tester_id",
+  "subject_hdr_name": "Tester_id",
+  "score_column": "Score",
+  "dataset_name": "vqeghd1",
+  "experiment_column": "Experiment",
+  "experiment_number": 1.0,
+  "characteristics":
+  {
+    "src_dir": "cdvl.org",
+    "pvs_dir": "cdvl.org",
+    "laboratory": "?",
+    "date": {
+      "start": "NULL",
+      "end": "NULL"
+    },
+    "with_sound": false
+  },
+  "tasks":
+  [
+    {
+      "id": 1,
+      "task" : "Please rate the overall quality of a single stimulus"
+    }
+  ],
+  "scales":
+  [
+    {
+      "id": 1,
+      "name": "ACR5",
+      "type": "ordinal",
+      "description": "A classical Absolute Category Rating (ACR) scale with 5 ordinal levels",
+      "range": {
+        "min": 1,
+        "max": 5
+      },
+      "labels": {
+        "bad": 1,
+        "poor": 2,
+        "fair": 3,
+        "good": 4,
+        "excellent": 5
+      }
+    }
+  ],
+  "questions":
+  [
+    {
+      "id": 1,
+      "question": "Please rate on overall quality",
+      "scale_id": 1
+    }
+  ]
+}

@@ -1,8 +1,6 @@
 from sujson._sujson import Sujson
 import os
 
-# TODO @awro1444 Ideally, everything that we need to use here should be available in the repo. In other words, please
-#  make the code more portable
 sujson = Sujson()
 sujson_file = 'example\hdtv5.json'
 sujson._read_sujson(sujson_file)
@@ -15,11 +13,9 @@ print(df.groupby('stimulus_id')['score'].mean())
 # standard deviation
 print(df.groupby('stimulus_id')['score'].std())
 
-
 # tutorial
 
 # translating .xml file to suJSON
-# my_xls = 'D:\\Users\\awrob\GitHub\\translator-to-suJSON\example\data\VQEG_HDTV_Final_Report_Data.xls'
 my_xls = 'example\data\VQEG_HDTV_Final_Report_Data.xls'
 config = 'example\config\config_for_hdtv.json'
 output_sujson = 'example\output.json'

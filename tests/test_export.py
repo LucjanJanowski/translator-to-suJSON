@@ -2,14 +2,9 @@ from sujson._sujson import Sujson
 import unittest
 import os
 import pandas as pd
-from sujson._errors import SujsonError
-
-# TODO @awro1444 Please change the name of this file to test_export.py
 
 
 class ExportTests(unittest.TestCase):
-    # TODO @awro1444 Put these lines into the constructor or into the setUp() function
-    # TODO @awro1444 Make sure the code is portable. Please add any relevant files to the repo
 
     def setUp(self):
         self.sujson = Sujson()

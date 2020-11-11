@@ -402,44 +402,74 @@ class Sujson:
             raise SujsonError("That is not a correct output path: {}".format(output_file))
 
         infile = pd.read_csv(input_file)
-        for pvs in infile.get('PVS_ID').unique():
-            pvs_name = pvs.split('_')[0]
-            pvs_id = pvs.split('_')[1]
-            self.sujson.get('pvs').append({'id': pvs_id, 'name': pvs_name})
+        infile = infile.loc[infile[self.config['experiment_column']] == self.config['experiment_number']]
 
-        for subject in infile.get('Tester_id').unique():
-            self.sujson.get('subjects').append({'id': subject})
+        self.sujson = self._json_structure()
 
-        score_id = 0
-        trial_id = 0
+        # filling hrc field in sujson
+        hrc_id = 1
+        for hrc_name in infile.get(self.config['hrc_hdr_name']).unique():
+            self.sujson.get('hrc').append({'id': hrc_id, 'name': hrc_name})
+            hrc_id = hrc_id+1
+
+        # filling src field in sujson
+        src_id = 1
+        for src_name in infile.get(self.config['src_hdr_name']).unique():
+            self.sujson.get('src').append({'id': src_id, 'name': src_name})
+            src_id = src_id + 1
+
+        # filling pvs field in sujson
+        unique_pvs_list = []
+        for index, row in infile.iterrows():
+            if row.get(self.config['file_hdr_name']) not in unique_pvs_list:
+                unique_pvs_list.append(row.get(self.config['file_hdr_name']))
+                src_index = self.find_by_value('name', row.get(self.config['src_hdr_name']), self.sujson.get('src'))
+                hrc_index = self.find_by_value('name', row.get(self.config['hrc_hdr_name']), self.sujson.get('hrc'))
+                self.sujson.get('pvs').append(
+                    {
+                        'id': row.get(self.config['pvs_hdr_name']),
+                        'src_id': self.sujson.get('src')[src_index].get('id'),
+                        'hrc_id': self.sujson.get('hrc')[hrc_index].get('id'),
+                        'name': row.get(self.config['file_hdr_name'])
+                    }
+                )
+
+        # filling subjects field in sujson
+        subject_id = 1
+        for subject in infile.get(self.config['subject_column_name']).unique():
+            self.sujson.get('subjects').append({'id': subject_id, 'name': subject})
+            subject_id = subject_id+1
+
+        # filling trials and socres fields in sujson
+        score_id = 1
+        trial_id = 1
         for index, row in infile.iterrows():
             self.sujson.get('trials').append(
                 {'id': trial_id,
-                 'subject_id': row.get('Tester_id'),
+                 'subject_id': row.get(self.config['subject_column_name']),
                  'task_id': 1,
-                 'pvs_id': row.get('PVS_ID').split('_')[1],
+                 'pvs_id': row.get(self.config['src_hdr_name']),
                  'score_id': score_id}
             )
-            self.sujson.get('scores').append({'id': score_id, 'score': row.get('Score')})
+            self.sujson.get('scores').append({'id': score_id, 'score': row.get(self.config['score_column'])})
             score_id = score_id+1
             trial_id = trial_id+1
 
-        pprint.pprint(self.sujson)
-
+        self._write_data_to_json(output_file)
 
     def raw_export(self, outfile):
         pickle.dump(self.sujson, outfile)
 
     def find_by_value(self, dict_key, dict_value, searched_list):
         """
-        TODO @awro1444 Can you please fill in the description of this function? The function is really cool, but it
-         took me several minutes to eventually understand how it works. I am guessing other developers will have similar
-         problems. :)
+        Function takes list of dictionaries (searched_list) and finds which dictionary has assigned dict_value to
+        dict_key in it. It returns index of the first dictionary in list that has dict_value assigned to dict_key.
+        If there is no dict_value in any dictionary, None is returned.
 
-        :param dict_key:
-        :param dict_value:
-        :param searched_list:
-        :return:
+        :param dict_key: name of the key we are interested in
+        :param dict_value: value of dict_key we want to find
+        :param searched_list: list of dictionaries
+        :return: index of the first dictionary in list that has dict_value assigned to dict_key or None if there is no such value
         """
         index = 0
         for i in searched_list:
