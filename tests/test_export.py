@@ -8,12 +8,12 @@ class ExportTests(unittest.TestCase):
 
     def setUp(self):
         self.sujson = Sujson()
-        self.incorrect_file_path = 'example\incorrect\hdtv1.json'
-        self.input_file_path = 'example\hdtv5.json'
+        self.incorrect_file_path = 'example/incorrect/hdtv1.json'
+        self.input_file_path = 'example/hdtv5.json'
         self.sujson_format = 'suJSON'
         self.pandas_format = 'Pandas'
-        self.output_csv = 'example\output.csv'
-        self.output_pickle = 'example\output.pickle'
+        self.output_csv = 'example/output.csv'
+        self.output_pickle = 'example/output.pickle'
 
     def tearDown(self):
         if os.path.exists(self.output_csv):

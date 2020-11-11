@@ -9,14 +9,14 @@ import os
 class CommandLineTests(unittest.TestCase):
     def setUp(self):
         self.sujson = Sujson()
-        self.input_file = 'example\hdtv5.json'
-        self.incorrect_file_path = 'example\incorrect\hdtv1.json'
+        self.input_file = 'example/hdtv5.json'
+        self.incorrect_file_path = 'example/incorrect/hdtv1.json'
         self.sujson_format = 'suJSON'
         self.pandas_format = 'Pandas'
-        self.output_csv = 'example\output.csv'
-        self.output_pickle = 'example\output.pickle'
-        self.output_json = "example\output.json"
-        self.incorrect_output_path = "example\incorrect\output.pickle"
+        self.output_csv = 'example/output.csv'
+        self.output_pickle = 'example/output.pickle'
+        self.output_json = "example/output.json"
+        self.incorrect_output_path = "example/incorrect/output.pickle"
 
     def tearDown(self):
         if os.path.exists(self.output_csv):
@@ -33,8 +33,8 @@ class CommandLineTests(unittest.TestCase):
 
     def test_ingest_csv(self):
         proc = self.run_command(
-            ["ingest", "example\\data\\subjective_quality_datasets.csv",
-             "-c", "example\\config\\config_for_hdtv_csv.json",
+            ["ingest", "example/data/subjective_quality_datasets.csv",
+             "-c", "example/config/config_for_hdtv_csv.json",
              "-o", self.output_json])
 
         outs, errs = proc.communicate()
@@ -43,8 +43,8 @@ class CommandLineTests(unittest.TestCase):
 
     def test_ingest_xlsx(self):
         proc = self.run_command(
-            ["ingest", "example\\data\\VQEG_HDTV_Final_Report_Data.xls",
-             "-c", "example\\config\\config_for_hdtv.json",
+            ["ingest", "example/data/VQEG_HDTV_Final_Report_Data.xls",
+             "-c", "example/config/config_for_hdtv.json",
              "-o", self.output_json])
 
         outs, errs = proc.communicate()
