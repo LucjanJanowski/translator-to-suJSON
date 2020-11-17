@@ -1,5 +1,6 @@
 from sujson._sujson import Sujson
 import unittest
+from pathlib import Path
 
 
 class BuildDataFrameTests(unittest.TestCase):
@@ -7,7 +8,7 @@ class BuildDataFrameTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.sujson = Sujson()
-        cls.input_file_path = 'example/hdtv5.json'
+        cls.input_file_path = str(Path('example', 'hdtv5.json'))
 
     def test_build(self):
         self.sujson._read_sujson(self.input_file_path)

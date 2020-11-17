@@ -1,7 +1,8 @@
 from sujson._sujson import Sujson
+from subprocess import PIPE
+from pathlib import Path
 import unittest
 import subprocess
-from subprocess import PIPE
 import sys
 import os
 
@@ -9,14 +10,14 @@ import os
 class CommandLineTests(unittest.TestCase):
     def setUp(self):
         self.sujson = Sujson()
-        self.input_file = 'example/hdtv5.json'
-        self.incorrect_file_path = 'example/incorrect/hdtv1.json'
+        self.input_file = str(Path('example', 'hdtv5.json'))
+        self.incorrect_file_path = str(Path('example', 'incorrect', 'hdtv1.json'))
         self.sujson_format = 'suJSON'
         self.pandas_format = 'Pandas'
-        self.output_csv = 'example/output.csv'
-        self.output_pickle = 'example/output.pickle'
-        self.output_json = "example/output.json"
-        self.incorrect_output_path = "example/incorrect/output.pickle"
+        self.output_csv = str(Path('example', 'output.csv'))
+        self.output_pickle = str(Path('example', 'output.pickle'))
+        self.output_json = str(Path('example', 'output.json'))
+        self.incorrect_output_path = str(Path('example', 'incorrect', 'output.pickle'))
 
     def tearDown(self):
         if os.path.exists(self.output_csv):
@@ -27,14 +28,16 @@ class CommandLineTests(unittest.TestCase):
             os.remove(self.output_json)
 
     def run_command(self, args):
-        cmd_args = [sys.executable, "-m", "sujson"]
+        cmd_args = [sys.executable, '-m', 'sujson']
         cmd_args = cmd_args + args
         return subprocess.Popen(cmd_args, stdout=PIPE, stderr=PIPE, text=True)
 
     def test_ingest_csv(self):
+        csv_hdtv_test = str(Path('example', 'data', 'subjective_quality_datasets.csv'))
+        csv_hdtv_config = str(Path('example', 'config', 'config_for_hdtv_csv.json'))
         proc = self.run_command(
-            ["ingest", "example/data/subjective_quality_datasets.csv",
-             "-c", "example/config/config_for_hdtv_csv.json",
+            ["ingest", csv_hdtv_test,
+             "-c", csv_hdtv_config,
              "-o", self.output_json])
 
         outs, errs = proc.communicate()
@@ -42,9 +45,11 @@ class CommandLineTests(unittest.TestCase):
         self.assertTrue(os.path.isfile(self.output_json))
 
     def test_ingest_xlsx(self):
+        xls_hdtv_test = str(Path('example', 'data', 'VQEG_HDTV_Final_Report_Data.xls'))
+        xls_hdtv_config = str(Path('example', 'config', 'config_for_hdtv.json'))
         proc = self.run_command(
-            ["ingest", "example/data/VQEG_HDTV_Final_Report_Data.xls",
-             "-c", "example/config/config_for_hdtv.json",
+            ["ingest", xls_hdtv_test,
+             "-c", xls_hdtv_config,
              "-o", self.output_json])
 
         outs, errs = proc.communicate()
@@ -89,7 +94,7 @@ class CommandLineTests(unittest.TestCase):
 
         outs, errs = proc.communicate()
 
-        self.assertEqual('ERROR: For suJSON format only .pickle output file is allowed\n', outs)
+        self.assertIn('ERROR', outs)
         self.assertFalse(os.path.isfile(self.output_csv))
 
     def test_incorrect_input_path(self):
@@ -100,7 +105,7 @@ class CommandLineTests(unittest.TestCase):
 
         outs, errs = proc.communicate()
 
-        self.assertEqual('ERROR: That is not a correct input path: {}\n'.format(self.incorrect_file_path), outs)
+        self.assertIn('ERROR', outs)
         self.assertFalse(os.path.isfile(self.output_csv))
 
     def test_incorrect_output_path(self):
@@ -111,7 +116,7 @@ class CommandLineTests(unittest.TestCase):
 
         outs, errs = proc.communicate()
 
-        self.assertEqual('ERROR: That is not a correct output path: {}\n'.format(self.incorrect_output_path), outs)
+        self.assertIn('ERROR', outs)
         self.assertFalse(os.path.isfile(self.output_csv))
 
 

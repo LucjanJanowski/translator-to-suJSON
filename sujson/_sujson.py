@@ -391,11 +391,20 @@ class Sujson:
         # Save results to JSON file
         self._write_data_to_json(output_file)
 
-    def import_csv(self, input_file, output_file=None, config_file=None):
-        self._read_config(config_file)
-        # TODO import CSV file
-        # TODO @awro1444 Make use of the configuration file
+    def import_csv(self, input_file, output_file=None, config_file= None):
+        """
+        Function takes subjective test data from input_file of .csv format and converts it to suJSON format
+        using config_file. Output data is written to output_file (.json)
+        or to STDOUT when no output file specified.
+
+        :param input_file: .csv file with data from subjective test
+        :param output_file: output file to which suJSON will be written
+        :param config_file: configuration file for input_file
+        """
+
         # TODO (future) Use the heuristics detecting whether we are dealing with a tidy input
+        self._read_config(config_file)
+
         try:
             open(input_file, newline='')
         except FileNotFoundError:
@@ -458,6 +467,11 @@ class Sujson:
         self._write_data_to_json(output_file)
 
     def raw_export(self, outfile):
+        """
+        Function saves suJSON data to pickle
+
+        :param outfile: output file to save data in it
+        """
         pickle.dump(self.sujson, outfile)
 
     def find_by_value(self, dict_key, dict_value, searched_list):
@@ -479,7 +493,15 @@ class Sujson:
         return None
 
     def build_dataframe(self, trial, pvs_id, score_id):
+        """
+        Function fills self.dataframe dictionary with values from suJSON. Resulting dictionary has following
+        keys: stimulus_id, scores, trial_id, subject_id, timestamp, session_num,
+        subject, src and hrc.
 
+        :param trial: single element form self.sujson['trials']
+        :param pvs_id: single pvs_id value from trial element
+        :param score_id: single score_id value from trial element
+        """
         self.dataframe['stimulus_id'].append(pvs_id)
         self.dataframe['scores'].append(self.sujson['scores'][self.find_by_value('id', score_id, self.sujson['scores'])]
                                         ['score'])
@@ -510,7 +532,12 @@ class Sujson:
             self.dataframe['hrc'].append(None)
 
     def pandas_export(self):
+        """
+        Function iterates over self.sujson['trials'] and calls build_dataframe() function
+        for each trial, then creates Pandas DataFrame.
 
+        :return: scores_data_frame: Pandas DataFrame resulted from self.sujson
+        """
         # Iterate over all trials
         for trial in self.sujson['trials']:
             # TODO (optional) @awro1444 What if the same person scores the same stimulus two or more times? Please note
@@ -553,15 +580,33 @@ class Sujson:
 
         return scores_data_frame
 
-    def export(self, input_file, output_format, output_file=None):
+    def export(self, input_file, output_format, output_file):
         """
-        Here goes the description...
+        Function takes from input_file data of suJSON format and saves it to output_file.
+        If output_format is "suJSON" it writes it as raw suJSON.
+        If output_format is "Pandas" it translates it into Pandas DataFrame.
 
-        :param input_file: ..
-        :param output_format: ..
-        :param output_file: ..
-        :return: status - True if successful, False otherwise
+        :param input_file: path to file with data saved in suJSON format
+        :param output_format: format of output, possible values: "suJSON" or "Pandas"
+        :param output_file: path to output file that we want output data to be saved as
+        :return: status - True if successful
         """
+
+        suffix = os.path.splitext(input_file)[1]
+        if suffix not in [".json"]:
+            raise SujsonError("Unsupported input file suffix {}".format(suffix))
+
+        output_suffix = os.path.splitext(output_file)[1]
+        if output_suffix not in [".pickle", ".csv"]:
+            raise SujsonError("Unsupported output file suffix {}".format(output_suffix))
+
+        #format_arg = _cli_args.format
+        if output_format not in ["suJSON", "Pandas"]:
+            raise SujsonError("Unsupported format argument {} - possible 'suJSON' or 'Pandas'".format(output_format))
+
+        if output_format == "suJSON" and output_suffix == ".csv":
+            raise SujsonError("For suJSON format only .pickle output file is allowed")
+
         try:
             self._read_sujson(input_file)
         except FileNotFoundError as e:
