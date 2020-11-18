@@ -32,18 +32,17 @@ proc.communicate()
 
 
 # translating .csv file to suJSON
-# TODO @awro1444 Change "xls_file" into "csv_file" since this is what this variable actually points to
-xls_file = str(Path('example', 'data', 'subjective_quality_datasets.csv'))
+csv_file = str(Path('example', 'data', 'subjective_quality_datasets.csv'))
 config = str(Path('example', 'config', 'config_for_hdtv_csv.json'))
 sujson_from_csv = str(Path('example', 'csv_output.json'))
 
-command = 'python -m sujson ingest {} {} -o {}'.format(xls_file, config, sujson_from_csv)
+command = 'python -m sujson ingest {} {} -o {}'.format(csv_file, config, sujson_from_csv)
 proc = subprocess.Popen(command, stdin=PIPE, stderr=PIPE, text=True)
 proc.communicate()
 
 
 # translating .csv file to suJSON without  output file - printing to console
-command = 'python -m sujson ingest {} {}'.format(xls_file, config)
+command = 'python -m sujson ingest {} {}'.format(csv_file, config)
 proc = subprocess.Popen(command, stdin=PIPE, stderr=PIPE, text=True)
 proc.communicate()
 
