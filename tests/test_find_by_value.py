@@ -1,17 +1,17 @@
 from sujson._sujson import Sujson
 import unittest
 
-
+# should be run in main project directory
 class FindByValueTests(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        cls.sujson = Sujson()
-        cls.my_list = []
-        for i in range(100):
-            cls.my_list.append({"key": "a" + str(i)})
 
-        cls.my_list.append({"key2": {"key3": 3}})
-        cls.my_list.append({"key2.0": [{"key3.0": 30}]})
+    def setUp(self):
+        self.sujson = Sujson()
+        self.my_list = []
+        for i in range(100):
+            self.my_list.append({"key": "a" + str(i)})
+
+        self.my_list.append({"key2": {"key3": 3}})
+        self.my_list.append({"key2.0": [{"key3.0": 30}]})
 
     def test_find_by_value(self):
         index = self.sujson.find_by_value("key", "a30", self.my_list)

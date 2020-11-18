@@ -69,7 +69,7 @@ def subcommand(_args=[], parent=subparsers):
         argument(
             "input", type=str, help="Input file, currently only .xslx or .csv supported"
         ),
-        argument("-c", "--config", type=str, help="Config file"),
+        argument("config", type=str, help="Config file"),
         argument(
             "-o",
             "--output",
@@ -89,15 +89,15 @@ def ingest(_args):
     if suffix in [".xls", ".xlsx"]:
         sujson.import_xslx(
             _args.input,
-            _args.output,
-            config_file=_args.config
+            _args.config,
+            output_file=_args.output
             # TODO: add other possible arguments here (e.g. those from config)
         )
     elif suffix in [".csv"]:
         sujson.import_csv(
             _args.input,
-            _args.output,
-            config_file=_args.config
+            _args.config,
+            output_file=_args.output
             # TODO: add other possible arguments here (e.g. record separator)
         )
     else:

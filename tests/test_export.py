@@ -4,7 +4,7 @@ import os
 import pandas as pd
 from pathlib import Path
 
-
+# should be run in main project directory
 class ExportTests(unittest.TestCase):
 
     def setUp(self):

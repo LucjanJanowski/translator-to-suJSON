@@ -2,13 +2,12 @@ from sujson._sujson import Sujson
 import unittest
 from pathlib import Path
 
-
+# should be run in main project directory
 class BuildDataFrameTests(unittest.TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.sujson = Sujson()
-        cls.input_file_path = str(Path('example', 'hdtv5.json'))
+    def setUp(self):
+        self.sujson = Sujson()
+        self.input_file_path = str(Path('example', 'hdtv5.json'))
 
     def test_build(self):
         self.sujson._read_sujson(self.input_file_path)

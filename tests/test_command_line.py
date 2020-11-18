@@ -6,8 +6,9 @@ import subprocess
 import sys
 import os
 
-
+# should be run in main project directory
 class CommandLineTests(unittest.TestCase):
+
     def setUp(self):
         self.sujson = Sujson()
         self.input_file = str(Path('example', 'hdtv5.json'))
@@ -37,7 +38,7 @@ class CommandLineTests(unittest.TestCase):
         csv_hdtv_config = str(Path('example', 'config', 'config_for_hdtv_csv.json'))
         proc = self.run_command(
             ["ingest", csv_hdtv_test,
-             "-c", csv_hdtv_config,
+             csv_hdtv_config,
              "-o", self.output_json])
 
         outs, errs = proc.communicate()
@@ -49,7 +50,7 @@ class CommandLineTests(unittest.TestCase):
         xls_hdtv_config = str(Path('example', 'config', 'config_for_hdtv.json'))
         proc = self.run_command(
             ["ingest", xls_hdtv_test,
-             "-c", xls_hdtv_config,
+             xls_hdtv_config,
              "-o", self.output_json])
 
         outs, errs = proc.communicate()

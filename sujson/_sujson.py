@@ -243,8 +243,13 @@ class Sujson:
         else:
             logger.warning("No config file given. We have to make many assumptions...")
 
-    def import_xslx(self, input_file, output_file=None, config_file=None):
+    def import_xslx(self, input_file, config_file, output_file=None):
         # TODO @Qub3k Simplify this function (probably by splitting it into multiple smaller functions)
+        if output_file is not None:
+            output_suffix = os.path.splitext(output_file)[1]
+            if output_suffix not in [".json"]:
+                raise SujsonError("Unsupported output file suffix {}".format(output_suffix))
+
         self._read_config(config_file)
 
         logger.info("Reading data from {}".format(input_file))
@@ -391,26 +396,31 @@ class Sujson:
         # Save results to JSON file
         self._write_data_to_json(output_file)
 
-    def import_csv(self, input_file, output_file=None, config_file= None):
+    def import_csv(self, input_file, config_file, output_file=None):
         """
         Function takes subjective test data from input_file of .csv format and converts it to suJSON format
         using config_file. Output data is written to output_file (.json)
         or to STDOUT when no output file specified.
 
         :param input_file: .csv file with data from subjective test
-        :param output_file: output file to which suJSON will be written
         :param config_file: configuration file for input_file
+        :param output_file: output file to which suJSON will be written
         """
 
         # TODO (future) Use the heuristics detecting whether we are dealing with a tidy input
+
+        if output_file is not None:
+            output_suffix = os.path.splitext(output_file)[1]
+            if output_suffix not in [".json"]:
+                raise SujsonError("Unsupported output file suffix {}".format(output_suffix))
+
         self._read_config(config_file)
 
         try:
-            open(input_file, newline='')
+            infile = pd.read_csv(input_file)
         except FileNotFoundError:
-            raise SujsonError("That is not a correct output path: {}".format(output_file))
+            raise SujsonError("That is not a correct input path: {}".format(input_file))
 
-        infile = pd.read_csv(input_file)
         infile = infile.loc[infile[self.config['experiment_column']] == self.config['experiment_number']]
 
         self.sujson = self._json_structure()
@@ -600,7 +610,6 @@ class Sujson:
         if output_suffix not in [".pickle", ".csv"]:
             raise SujsonError("Unsupported output file suffix {}".format(output_suffix))
 
-        #format_arg = _cli_args.format
         if output_format not in ["suJSON", "Pandas"]:
             raise SujsonError("Unsupported format argument {} - possible 'suJSON' or 'Pandas'".format(output_format))
 
