@@ -33,7 +33,7 @@ class ImportCsvTests(unittest.TestCase):
 
         self.sujson.import_csv(self.input_file_path, self.config_file)
         sys.stdout = stdout
-        self.assertNotEqual('', stdout_from_function.getvalue())
+        self.assertIn('sujson_version', stdout_from_function.getvalue())
 
     def test_import_csv_incorrect_input_path(self):
         with self.assertRaises(SystemExit):

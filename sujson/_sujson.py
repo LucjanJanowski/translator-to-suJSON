@@ -403,9 +403,9 @@ class Sujson:
         using config_file. Output data is written to output_file (.json)
         or to STDOUT when no output file specified.
 
-        :param input_file: .csv file with data from subjective test
-        :param config_file: configuration file for input_file
-        :param output_file: output file to which suJSON will be written
+        :param input_file: path to input .csv file with data from subjective test
+        :param config_file: path to configuration file for input file
+        :param output_file: path to output file to which suJSON will be written
         """
 
         # TODO (future) Use the heuristics detecting whether we are dealing with a tidy input
@@ -485,7 +485,7 @@ class Sujson:
         """
         Function saves suJSON data to pickle
 
-        :param outfile: output file to save data in it
+        :param outfile: file object to save data in it
         """
         pickle.dump(self.sujson, outfile)
 
@@ -568,8 +568,6 @@ class Sujson:
 
             else:
                 self.build_dataframe(trial, trial['pvs_id'], trial['score_id'])
-
-                # # FIXME Fix the problem with suJSONs that do not have the "src_id" key
 
         scores_data_frame = pd.DataFrame({'stimulus_id': self.dataframe['stimulus_id'],
                                           'subject_id': self.dataframe['subject_id'],
