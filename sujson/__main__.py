@@ -86,6 +86,8 @@ def ingest(_args):
     sujson = Sujson(force=_args.force, dry_run=_args.dry_run)
 
     suffix = os.path.splitext(_args.input)[1]
+    # TODO @Qub3k Add import() function to the suJSON class and in this function decide whether to call import_xslx or
+    #  import_csv
     if suffix in [".xls", ".xlsx"]:
         sujson.import_xslx(
             _args.input,

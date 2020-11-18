@@ -32,6 +32,7 @@ proc.communicate()
 
 
 # translating .csv file to suJSON
+# TODO @awro1444 Change "xls_file" into "csv_file" since this is what this variable actually points to
 xls_file = str(Path('example', 'data', 'subjective_quality_datasets.csv'))
 config = str(Path('example', 'config', 'config_for_hdtv_csv.json'))
 sujson_from_csv = str(Path('example', 'csv_output.json'))

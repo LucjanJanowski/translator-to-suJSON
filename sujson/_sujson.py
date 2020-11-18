@@ -62,6 +62,7 @@ class Sujson:
 
         if output_file:
             if not self.dry_run:
+                # TODO Consider catching the "file does not exist" exception and rising the suJSON exception
                 with open(output_file, "w") as out_f:
                     logger.info("Writing suJSON data to {}".format(output_file))
                     json.dump(self.sujson, out_f, indent=4, default=default_converter)
@@ -557,7 +558,8 @@ class Sujson:
             # TODO (optional) @awro1444 What if the same person scores the same stimulus two or more times? Please note
             #  that in this situation you will have only one value under the "pvs_id" key, but a list of values under
             #  the "score_id" key.
-            if type(trial['pvs_id']) is list or type(trial['score_id']) is list:
+            if type(trial['pvs_id']) is list and type(trial['score_id']) is list:
+                assert len(trial['pvs_id']) == len(trial['score_id'])
                 # TODO (optional) @awro1444 What if in a single trial one person scores two stimuli at once? In other
                 #  words, what if one score is associated with two stimuli?
                 for pvs_id, score_id in zip(trial['pvs_id'], trial['score_id']):
