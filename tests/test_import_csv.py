@@ -10,8 +10,9 @@ class ImportCsvTests(unittest.TestCase):
 
     def setUp(self):
         self.sujson = Sujson()
-        self.incorrect_file_path = str(Path('example', 'incorrect', 'hdtv1.json'))
-        self.incorrect_output_file = str(Path('example', 'output.pickle'))
+        self.incorrect_input_file_path = str(Path('example', 'incorrect', 'hdtv1.json'))
+        self.incorrect_input_file_format = str(Path('example', 'data', 'VQEG_HDTV_Final_Report_Data.xls'))
+        self.incorrect_output_file_format = str(Path('example', 'output.pickle'))
         self.input_file_path = str(Path('example', 'data', 'subjective_quality_datasets.csv'))
         self.output_sujson = str(Path('example', 'output.json'))
         self.config_file = str(Path('example', 'config', 'config_for_hdtv_csv.json'))
@@ -34,13 +35,17 @@ class ImportCsvTests(unittest.TestCase):
         sys.stdout = stdout
         self.assertNotEqual('', stdout_from_function.getvalue())
 
-    def test_import_csv_incorrect_path(self):
+    def test_import_csv_incorrect_input_path(self):
         with self.assertRaises(SystemExit):
-            self.sujson.import_csv(self.incorrect_file_path, self.config_file, output_file=self.output_sujson)
+            self.sujson.import_csv(self.incorrect_input_file_path, self.config_file, output_file=self.output_sujson)
+
+    def test_import_csv_incorrect_input_file_format(self):
+        with self.assertRaises(SystemExit):
+            self.sujson.import_csv(self.incorrect_input_file_format, self.config_file, output_file=self.output_sujson)
 
     def test_import_csv_incorrect_output_file_format(self):
         with self.assertRaises(SystemExit):
-            self.sujson.import_csv(self.input_file_path, self.config_file, output_file=self.incorrect_output_file)
+            self.sujson.import_csv(self.input_file_path, self.config_file, output_file=self.incorrect_input_file_format)
 
 
 if __name__ == '__main__':

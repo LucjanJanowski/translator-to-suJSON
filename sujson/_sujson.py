@@ -409,6 +409,10 @@ class Sujson:
 
         # TODO (future) Use the heuristics detecting whether we are dealing with a tidy input
 
+        input_suffix = os.path.splitext(input_file)[1]
+        if input_suffix not in [".csv"]:
+            raise SujsonError("Unsupported input file suffix {}".format(input_suffix))
+
         if output_file is not None:
             output_suffix = os.path.splitext(output_file)[1]
             if output_suffix not in [".json"]:
