@@ -69,7 +69,7 @@ def subcommand(_args=[], parent=subparsers):
         argument(
             "input", type=str, help="Input file, currently only .xslx or .csv supported"
         ),
-        argument("-c", "--config", type=str, help="Config file"),
+        argument("config", type=str, help="Config file"),
         argument(
             "-o",
             "--output",
@@ -86,18 +86,20 @@ def ingest(_args):
     sujson = Sujson(force=_args.force, dry_run=_args.dry_run)
 
     suffix = os.path.splitext(_args.input)[1]
+    # TODO @Qub3k Add import() function to the suJSON class and in this function decide whether to call import_xslx or
+    #  import_csv
     if suffix in [".xls", ".xlsx"]:
         sujson.import_xslx(
             _args.input,
-            _args.output,
-            config_file=_args.config
+            _args.config,
+            output_file=_args.output
             # TODO: add other possible arguments here (e.g. those from config)
         )
     elif suffix in [".csv"]:
         sujson.import_csv(
             _args.input,
-            _args.output,
-            config_file=_args.config
+            _args.config,
+            output_file=_args.output
             # TODO: add other possible arguments here (e.g. record separator)
         )
     else:
@@ -129,21 +131,6 @@ def export(_cli_args):
     """
     logger.debug("Ingesting with arguments: {}".format(_cli_args))
     sujson = Sujson(force=_cli_args.force, dry_run=_cli_args.dry_run)
-
-    suffix = os.path.splitext(_cli_args.input)[1]
-    if suffix not in [".json"]:
-        raise SujsonError("Unsupported input file suffix {}".format(suffix))
-
-    output_suffix = os.path.splitext(_cli_args.output)[1]
-    if output_suffix not in [".pickle", ".csv"]:
-        raise SujsonError("Unsupported output file suffix {}".format(output_suffix))
-
-    format_arg = _cli_args.format
-    if format_arg not in ["suJSON", "Pandas"]:
-        raise SujsonError("Unsupported format argument {} - possible 'suJSON' or 'Pandas'".format(format_arg))
-
-    if format_arg == "suJSON" and output_suffix == ".csv":
-        raise SujsonError("For suJSON format only .pickle output file is allowed")
 
     is_export_successful = sujson.export(_cli_args.input, _cli_args.format, _cli_args.output)
 
