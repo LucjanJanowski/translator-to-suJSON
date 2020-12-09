@@ -26,7 +26,7 @@ class ImportCsvTests(unittest.TestCase):
         self.assertTrue(os.path.isfile(self.output_sujson))
 
     def test_import_csv_without_output_file(self):
-        # redirecting standard output to variable result
+        # redirecting standard output to variable stdout_from_function
         stdout = sys.stdout
         stdout_from_function = StringIO()
         sys.stdout = stdout_from_function
