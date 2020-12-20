@@ -563,13 +563,18 @@ class Sujson:
             #  that in this situation you will have only one value under the "pvs_id" key, but a list of values under
             #  the "score_id" key.
             if type(trial['pvs_id']) is list and type(trial['score_id']) is list:
-                assert len(trial['pvs_id']) == len(trial['score_id'])
+                if len(trial['pvs_id']) == len(trial['score_id']):
+                    raise SujsonError("Cannot convert suJSON file")
                 # TODO (optional) What if in a single trial one person scores two stimuli at once? In other
                 #  words, what if one score is associated with two stimuli?
                 for pvs_id, score_id in zip(trial['pvs_id'], trial['score_id']):
-
                     self.build_dataframe(trial, pvs_id, score_id)
-
+            elif type(trial['pvs_id']) is list:
+                for pvs_id in trial['pvs_id']:
+                    self.build_dataframe(trial, pvs_id, trial['score_id'])
+            elif type(trial['score_id']) is list:
+                for score_id in trial['score_id']:
+                    self.build_dataframe(trial, trial['pvs_id'], score_id)
             else:
                 self.build_dataframe(trial, trial['pvs_id'], trial['score_id'])
 
@@ -669,7 +674,7 @@ class Sujson:
             self.raw_export(outfile)
 
         if output_format == "Pandas":
-            # exporting to pickle as Pandas Data Frame
+            # exporting as Pandas Data Frame
             df = self.pandas_export()
             if os.path.splitext(output_file)[1] in [".csv"]:
                 df.to_csv(output_file)
@@ -678,4 +683,4 @@ class Sujson:
 
         outfile.close()
 
-        return True  # "suJSON file successfully exported to a pickle"
+        return True  # "suJSON file successfully exported"
