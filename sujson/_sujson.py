@@ -661,13 +661,13 @@ class Sujson:
 
         try:
             self._read_sujson(input_file)
-        except FileNotFoundError as e:
-            raise SujsonError("That is not a correct input path: {}".format(input_file)) from e
+        except FileNotFoundError:
+            raise SujsonError("That is not a correct input path: {}".format(input_file))
 
         try:
             outfile = open(output_file, 'wb')
-        except FileNotFoundError as e:
-            raise SujsonError("That is not a correct output path: {}".format(output_file)) from e
+        except FileNotFoundError:
+            raise SujsonError("That is not a correct output path: {}".format(output_file))
 
         if output_format == "suJSON":
             # exporting suJSON dictionary to pickle
