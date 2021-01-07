@@ -42,6 +42,7 @@ class CommandLineTests(unittest.TestCase):
              "-o", self.output_json])
 
         outs, errs = proc.communicate()
+        self.assertEqual('', outs)
         self.assertEqual('', errs)
         self.assertTrue(os.path.isfile(self.output_json))
 
@@ -54,6 +55,7 @@ class CommandLineTests(unittest.TestCase):
              "-o", self.output_json])
 
         outs, errs = proc.communicate()
+        self.assertEqual('', outs)
         self.assertEqual('', errs)
         self.assertTrue(os.path.isfile(self.output_json))
 
@@ -64,6 +66,7 @@ class CommandLineTests(unittest.TestCase):
              "-f", self.pandas_format])
 
         outs, errs = proc.communicate()
+        self.assertEqual('', outs)
         self.assertEqual('', errs)
         self.assertTrue(os.path.isfile(self.output_pickle))
 
@@ -74,6 +77,7 @@ class CommandLineTests(unittest.TestCase):
              "-f", self.sujson_format])
 
         outs, errs = proc.communicate()
+        self.assertEqual('', outs)
         self.assertEqual('', errs)
         self.assertTrue(os.path.isfile(self.output_pickle))
 
@@ -84,6 +88,7 @@ class CommandLineTests(unittest.TestCase):
              "-f", self.pandas_format])
 
         outs, errs = proc.communicate()
+        self.assertEqual('', outs)
         self.assertEqual('', errs)
         self.assertTrue(os.path.isfile(self.output_csv))
 

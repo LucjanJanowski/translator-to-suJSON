@@ -459,10 +459,8 @@ class Sujson:
                 )
 
         # filling subjects field in sujson
-        subject_id = 1
         for subject in infile.get(self.config['subject_column_name']).unique():
-            self.sujson.get('subjects').append({'id': subject_id, 'name': subject})
-            subject_id = subject_id+1
+            self.sujson.get('subjects').append({'id': subject})
 
         # filling trials and socres fields in sujson
         score_id = 1
@@ -472,10 +470,16 @@ class Sujson:
                 {'id': trial_id,
                  'subject_id': row.get(self.config['subject_column_name']),
                  'task_id': 1,
-                 'pvs_id': row.get(self.config['src_hdr_name']),
+                 'pvs_id': row.get(self.config['pvs_hdr_name']),
                  'score_id': score_id}
             )
-            self.sujson.get('scores').append({'id': score_id, 'score': row.get(self.config['score_column'])})
+
+            self.sujson.get('scores').append(
+                {'id': score_id,
+                 'question_id': 1,
+                 'pvs_id': row.get(self.config['pvs_hdr_name']),
+                 'score': row.get(self.config['score_column'])}
+            )
             score_id = score_id+1
             trial_id = trial_id+1
 
@@ -555,17 +559,22 @@ class Sujson:
         """
         # Iterate over all trials
         for trial in self.sujson['trials']:
-            # TODO (optional) @awro1444 What if the same person scores the same stimulus two or more times? Please note
+            # TODO (optional) What if the same person scores the same stimulus two or more times? Please note
             #  that in this situation you will have only one value under the "pvs_id" key, but a list of values under
             #  the "score_id" key.
             if type(trial['pvs_id']) is list and type(trial['score_id']) is list:
-                assert len(trial['pvs_id']) == len(trial['score_id'])
-                # TODO (optional) @awro1444 What if in a single trial one person scores two stimuli at once? In other
+                if len(trial['pvs_id']) == len(trial['score_id']):
+                    raise SujsonError("Cannot convert suJSON file")
+                # TODO (optional) What if in a single trial one person scores two stimuli at once? In other
                 #  words, what if one score is associated with two stimuli?
                 for pvs_id, score_id in zip(trial['pvs_id'], trial['score_id']):
-
                     self.build_dataframe(trial, pvs_id, score_id)
-
+            elif type(trial['pvs_id']) is list:
+                for pvs_id in trial['pvs_id']:
+                    self.build_dataframe(trial, pvs_id, trial['score_id'])
+            elif type(trial['score_id']) is list:
+                for score_id in trial['score_id']:
+                    self.build_dataframe(trial, trial['pvs_id'], score_id)
             else:
                 self.build_dataframe(trial, trial['pvs_id'], trial['score_id'])
 
@@ -578,19 +587,49 @@ class Sujson:
                                           'order_num': self.dataframe['order_num'],
                                           'src': self.dataframe['src']})
 
+        hrc_characteristic_values = []
         for characteristic in self.dataframe['hrc']:
             if characteristic is not None:
                 for value in characteristic:
-                    scores_data_frame['hrc: ' + value] = characteristic.get(value)
-            else:
-                scores_data_frame['hrc'] = None
+                    if value not in hrc_characteristic_values:
+                        hrc_characteristic_values.append(value)
 
+        hrc_characteristic_dict = {}
+        for key in hrc_characteristic_values:
+            hrc_characteristic_dict.update({key: []})
+
+        for characteristic in self.dataframe['hrc']:
+            if characteristic is not None:
+                for value in hrc_characteristic_dict:
+                    hrc_characteristic_dict[value].append(characteristic.get(value))
+            else:
+                for value in hrc_characteristic_dict:
+                    hrc_characteristic_dict[value].append(None)
+
+        subject_characteristic_values = []
         for characteristic in self.dataframe['subject']:
             if characteristic is not None:
                 for value in characteristic:
-                    scores_data_frame['subject: ' + value] = characteristic.get(value)
+                    if value not in subject_characteristic_values:
+                        subject_characteristic_values.append(value)
+
+        subject_characteristic_dict = {}
+        for key in subject_characteristic_values:
+            subject_characteristic_dict.update({key: []})
+
+        for characteristic in self.dataframe['subject']:
+            if characteristic is not None:
+                for value in subject_characteristic_dict:
+                    subject_characteristic_dict[value].append(characteristic.get(value))
             else:
-                scores_data_frame['subject'] = None
+                for value in subject_characteristic_dict:
+                    subject_characteristic_dict[value].append(None)
+
+        for key in hrc_characteristic_dict:
+            scores_data_frame['hrc: ' + key] = hrc_characteristic_dict.get(key)
+
+        for key in subject_characteristic_dict:
+            scores_data_frame['subject: ' + key] = subject_characteristic_dict.get(key)
 
         return scores_data_frame
 
@@ -622,20 +661,20 @@ class Sujson:
 
         try:
             self._read_sujson(input_file)
-        except FileNotFoundError as e:
-            raise SujsonError("That is not a correct input path: {}".format(input_file)) from e
+        except FileNotFoundError:
+            raise SujsonError("That is not a correct input path: {}".format(input_file))
 
         try:
             outfile = open(output_file, 'wb')
-        except FileNotFoundError as e:
-            raise SujsonError("That is not a correct output path: {}".format(output_file)) from e
+        except FileNotFoundError:
+            raise SujsonError("That is not a correct output path: {}".format(output_file))
 
         if output_format == "suJSON":
             # exporting suJSON dictionary to pickle
             self.raw_export(outfile)
 
         if output_format == "Pandas":
-            # exporting to pickle as Pandas Data Frame
+            # exporting as Pandas Data Frame
             df = self.pandas_export()
             if os.path.splitext(output_file)[1] in [".csv"]:
                 df.to_csv(output_file)
@@ -644,4 +683,4 @@ class Sujson:
 
         outfile.close()
 
-        return True  # "suJSON file successfully exported to a pickle"
+        return True  # "suJSON file successfully exported"
