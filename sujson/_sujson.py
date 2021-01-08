@@ -563,7 +563,7 @@ class Sujson:
             #  that in this situation you will have only one value under the "pvs_id" key, but a list of values under
             #  the "score_id" key.
             if type(trial['pvs_id']) is list and type(trial['score_id']) is list:
-                if len(trial['pvs_id']) == len(trial['score_id']):
+                if len(trial['pvs_id']) != len(trial['score_id']):
                     raise SujsonError("Cannot convert suJSON file")
                 # TODO (optional) What if in a single trial one person scores two stimuli at once? In other
                 #  words, what if one score is associated with two stimuli?
