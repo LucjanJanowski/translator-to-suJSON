@@ -131,7 +131,7 @@ subjective test](https://www.its.bldrdoc.gov/media/4212/vqeg_hdtv_final_report_v
 ## Authors/Contact
 
 Should you have any questions please do not hesitate to contact the authors. The best way to do so is
-to star a new issue. 😌
+to start a new issue. 😌
 
 Authors:
 
