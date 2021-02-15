@@ -29,13 +29,14 @@ class Csv2json:
     def convert(self, path):
         json_data = []
         headers = []
+
         #Getting the column names into the headers array
+
         for col in self.df.columns:
             headers.append(col)
         headers.remove('tester_id')
         collector = []
         for index, row in self.df.iterrows():
-
 
             if len(collector) > 0 and collector[-1]["asset_id"] != row["asset_id"]:
 
@@ -46,7 +47,6 @@ class Csv2json:
             else:
                 collector.append(row)
 
-
-
         fp = open(path, "w")
         json_data = json.dump(json_data, fp, indent=2)
+        fp.close()

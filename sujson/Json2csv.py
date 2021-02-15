@@ -1,6 +1,8 @@
 import pandas as pd
 import json
 from copy import copy
+
+
 class Json2csv:
     def __init__(self):
         self.df = None
