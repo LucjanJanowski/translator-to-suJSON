@@ -12,40 +12,29 @@ class Csv2json:
         self.df = df
         return df
 
-    def create_dict(self, collector, headers):
-
-
-        dict = {}
-        os = []
-        for row in collector:
-            os.append(row["os"])
-
-        for h in headers:
-            dict[h] = collector[0][h]
-
-        dict["os"] = os
-        return dict
-
     def convert(self, path):
         json_data = []
-        headers = []
-
-        #Getting the column names into the headers array
-
-        for col in self.df.columns:
-            headers.append(col)
-        headers.remove('tester_id')
-        collector = []
+        os = {}
+        asset_id = []
+        content_id = []
+        path_data = []
         for index, row in self.df.iterrows():
+            if row["asset_id"] not in asset_id:
+                asset_id.append(row["asset_id"])
+                content_id.append(row["content_id"])
+                id = row["asset_id"]
+                path_data.append(row["path"])
+                os[id] = []
 
-            if len(collector) > 0 and collector[-1]["asset_id"] != row["asset_id"]:
+        for index, row in self.df.iterrows():
+            os[row["asset_id"]].append(row["os"])
 
-                dict = self.create_dict(collector, headers)
-                print(dict)
-                json_data.append(dict)
-                collector.clear()
-            else:
-                collector.append(row)
+        for i in range(len(asset_id)):
+            json_data.append(dict())
+            json_data[-1]["asset_id"] = asset_id[i]
+            json_data[-1]["content_id"] = content_id[i]
+            json_data[-1]["os"] = os[asset_id[i]]
+            json_data[-1]["path"] = path_data[i]
 
         fp = open(path, "w")
         json_data = json.dump(json_data, fp, indent=2)
